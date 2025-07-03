@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
- <style>
+  <style>
     :root {
       --header-bg: linear-gradient(145deg, #007BFF, #003366);
       --header-text-color: white;
@@ -298,11 +298,12 @@
 
       <span class="icon-button" id="profile-icon" title="Perfil">👤</span>
       <div class="dropdown-content" id="profile-dropdown">
-        <a href="#" class="dropdown-item-custom">
-             <img src="img/placeholder.png" alt="profile">
+        <a href="perfil.html" class="dropdown-item-custom">
+             <img class="foto-usuario" src="" alt="profile">
             <div>
-                <div class="fw-bold">Juan Sarcos</div>
-                <small>Ver tu perfil</small>
+                <span class="nombre-usuario"></span>
+                <br>
+                <small >Ver tu perfil</small>
             </div>
         </a>
         <hr class="my-2">
@@ -348,7 +349,7 @@
                 <option value="amigos">Solo amigos</option>
                 <option value="privada">Privada con invitación</option>
             </select>
-
+            
             <div class="mb-3">
               <label for="custom-terms" class="form-label">Términos y Condiciones Personalizados</label>
               <textarea id="custom-terms" class="form-control" rows="3" placeholder="Escribe términos personalizados aquí..."></textarea>
@@ -361,7 +362,6 @@
                 <label class="form-check-label" for="terms-illegal-substances">Prohibición de sustancias ilegales</label>
               </div>
             </div>
-
             <button id="publish-button" class="btn btn-primary w-100" disabled>Publicar</button>
         </div>
 
@@ -436,7 +436,8 @@
     </div>
   </div>
 
-  <script>
+
+<script>
 document.addEventListener('DOMContentLoaded', function() {
     
     const STORAGE_KEY = 'geoplanner_posts';
@@ -492,9 +493,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     mapModalEl.addEventListener('shown.bs.modal', function () {
-        mapModalEl.removeAttribute('aria-hidden'); // Ensure aria-hidden is removed when the modal is shown
-        mapModalEl.removeAttribute('inert');
-
         if (!modalMap) {
             modalMap = L.map('modal-map-container').setView([10.654, -71.612], 13);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(modalMap);
@@ -503,10 +501,6 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => modalMap.invalidateSize(), 10);
     });
 
-    mapModalEl.addEventListener('hidden.bs.modal', function () {
-        mapModalEl.setAttribute('inert', ''); // Use inert to prevent focus when the modal is hidden
-    });
-    
     document.getElementById('simple-route-tab').addEventListener('click', () => {
         routeType = 'simple';
         clearMap();
@@ -590,16 +584,18 @@ document.addEventListener('DOMContentLoaded', function() {
         if (localStorage.getItem(STORAGE_KEY)) return;
         const examples = [
              {
-                id: 'post_carlos', autor: 'carlos_martinez', username: 'carlitos', texto: 'Nos vemos en el parque central para una sesión de estudio.', privacidad: 'publica', mediaURL: 'img/estudio.jpg',
+                id: 'post_carlos', autor: 'carlos_martinez', username: 'carlos_martinez', texto: 'Nos vemos en el parque central para una sesión de estudio.', privacidad: 'publica', mediaURL: 'img/estudio.jpg',
                 ubicacion: '10.659,-71.611',
                 rutas: [{ coords: '10.659,-71.611', label: 'Punto de encuentro' }],
-                timestamp: new Date().toISOString(), likes: 2, likers: ['ana_g', 'luis_p'], comentarios: [{ autor: 'ana_g', texto: '¡Allí estaré!' }]
+                timestamp: new Date().toISOString(), likes: 2, likers: ['ana_g', 'luis_p'], comentarios: [{ autor: 'ana_g', texto: '¡Allí estaré!' }],
+                terms: { custom: 'Ser puntuales.', predefined: ['Prohibición de armas'] }
             },
             {
-                id: 'post_valentina', autor: 'valentina_g', username: 'valen123', texto: 'Picnic con amigos en el Jardín Botánico este domingo.', privacidad: 'amigos', mediaURL: '',
+                id: 'post_valentina', autor: 'valentina_g', username: 'valentina_g', texto: 'Picnic con amigos en el Jardín Botánico este domingo.', privacidad: 'amigos', mediaURL: '',
                 ubicacion: '10.661,-71.618',
                 rutas: [{ coords: '10.661,-71.618', label: 'Lugar del picnic' }],
-                timestamp: new Date().toISOString(), likes: 1, likers: [USER_ID], comentarios: [{ autor: 'valentina_g', texto: 'Invitados confirmados 😊' }]
+                timestamp: new Date().toISOString(), likes: 1, likers: [USER_ID], comentarios: [{ autor: 'valentina_g', texto: 'Invitados confirmados 😊' }],
+                terms: { custom: null, predefined: [] }
             }
         ];
         localStorage.setItem(STORAGE_KEY, JSON.stringify(examples));
@@ -609,9 +605,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const posts = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
         const feed = document.querySelector('.feed');
         
-        // Se crea un contenedor para el 'new-post' para evitar que se borre.
-        const newPostContainer = document.querySelector('.new-post-container');
-        
         feed.innerHTML = ''; 
         posts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         posts.forEach(post => feed.appendChild(renderPost(post)));
@@ -620,17 +613,17 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderPost(post) {
         const container = document.createElement('div');
         container.classList.add('post');
-
         const privacyBadge = {
             publica: '🔓 Pública',
             amigos: '👥 Amigos',
             privada: '🔒 Privada'
         }[post.privacidad] || '🔓 Pública';
 
+        // Lógica de renderizado principal
         container.innerHTML = `
             <h6>
                 <strong>${post.autor}</strong>
-                <small style="color: gray; font-size: 0.85em;">@${post.username}</small>
+                <small style="color: gray; font-size: 0.85em;">@${post.username || post.autor}</small>
                 <span class="badge bg-secondary">${privacyBadge}</span>
             </h6>
             <p>${post.texto}</p>
@@ -643,7 +636,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 : ''}
             <div class="d-flex gap-2 mt-2">
                 <button class="btn btn-sm btn-outline-danger" id="btn-like-${post.id}">
-                    ${post.likers.includes(post.username) ? '💔 Quitar Like' : '❤️ Like'} (<span id="likes-${post.id}">${post.likes}</span>)
+                    ${post.likers.includes(USER_ID) ? '💔 Quitar Like' : '❤️ Like'} (<span id="likes-${post.id}">${post.likes}</span>)
                 </button>
                 <button class="btn btn-sm btn-outline-secondary" id="btn-comment-toggle-${post.id}">💬 Comentarios (${post.comentarios.length})</button>
                 <button class="btn btn-sm btn-outline-info" id="btn-terms-${post.id}">📜 Ver Términos</button>
@@ -659,6 +652,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
 
+        // Lógica para el mapa
         const mapElement = container.querySelector(`#map-${post.id}`);
         setTimeout(() => {
              const map = L.map(mapElement, { zoomControl: false, scrollWheelZoom: false, dragging: true });
@@ -682,6 +676,7 @@ document.addEventListener('DOMContentLoaded', function() {
              map.invalidateSize();
         }, 0);
         
+        // Lógica para la lista de rutas
         if (post.rutas.length > 1) {
             const list = container.querySelector(`#ruta-list-${post.id}`);
             post.rutas.forEach(r => {
@@ -692,6 +687,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
+        // Listeners para botones de acción
         container.querySelector(`#btn-like-${post.id}`).addEventListener('click', () => toggleLike(post.id));
         container.querySelector(`#btn-comment-toggle-${post.id}`).addEventListener('click', () => new bootstrap.Collapse(container.querySelector(`#comentarios-${post.id}`), { toggle: true }));
         container.querySelector(`#btn-comment-${post.id}`).addEventListener('click', () => {
@@ -702,22 +698,21 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Cambiar la estructura de "terms" a un objeto y ajustar el guardado de términos
-        const termsButton = container.querySelector(`#btn-terms-${post.id}`);
-        termsButton.addEventListener('click', () => {
+        // INICIO: LÓGICA INTEGRADA (Botón de Términos)
+        container.querySelector(`#btn-terms-${post.id}`).addEventListener('click', () => {
             if (post.terms) {
-                const predefinedTerms = post.terms.predefined.length > 0 ? `Términos predefinidos:\n${post.terms.predefined.join('\n')}` : '';
-                const customTerms = post.terms.custom ? `Términos personalizados:\n${post.terms.custom}` : '';
-                const message = [predefinedTerms, customTerms].filter(Boolean).join('\n\n');
-
+                const predefined = post.terms.predefined && post.terms.predefined.length > 0 ? `Términos predefinidos:\n- ${post.terms.predefined.join('\n- ')}` : '';
+                const custom = post.terms.custom ? `Términos personalizados:\n${post.terms.custom}` : '';
+                const message = [predefined, custom].filter(Boolean).join('\n\n');
                 alert(message || 'No hay términos y condiciones asociados a esta publicación.');
             } else {
                 alert('No hay términos y condiciones asociados a esta publicación.');
             }
         });
+        // FIN: LÓGICA INTEGRADA (Botón de Términos)
 
-        const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
-        if (currentUser && post.username === currentUser.username) {
+        // INICIO: LÓGICA INTEGRADA (Botón de Eliminar)
+        if (post.autor === USER_ID) {
             const deleteButton = document.createElement('button');
             deleteButton.className = 'btn btn-sm btn-danger w-100 mt-2';
             deleteButton.id = `btn-delete-${post.id}`;
@@ -729,6 +724,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             container.appendChild(deleteButton);
         }
+        // FIN: LÓGICA INTEGRADA (Botón de Eliminar)
 
         return container;
     }
@@ -760,63 +756,55 @@ document.addEventListener('DOMContentLoaded', function() {
         loadPosts();
     }
     
+    // INICIO: FUNCIÓN INTEGRADA
     function eliminarPost(postId) {
         let posts = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
         posts = posts.filter(post => post.id !== postId);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
         loadPosts();
     }
-    
+    // FIN: FUNCIÓN INTEGRADA
+
     function guardarPublicacion() {
         const texto = document.getElementById('post-text').value.trim();
         const privacidad = document.getElementById('privacidad').value;
         const archivo = document.getElementById('file-media').files[0];
-
+        
         if (markers.length === 0) {
-            alert("Debes seleccionar una ubicación en el mapa.");
-            return;
+            alert("Debes seleccionar una ubicación en el mapa."); return;
         }
         if (!texto) {
-            alert("El texto de la publicación no puede estar vacío.");
-            return;
+            alert("El texto de la publicación no puede estar vacío."); return;
         }
 
         const latlngs = markers.map(m => m.getLatLng());
+        
         const rutaInputs = document.querySelectorAll('#ruta-inputs input');
         const rutas = latlngs.map((latlng, i) => ({
             coords: `${latlng.lat},${latlng.lng}`,
             label: rutaInputs[i]?.value.trim() || `Punto de interés ${i + 1}`
         }));
 
-        // Obtener términos directamente de los inputs
+        // INICIO: LÓGICA INTEGRADA (Guardar Términos)
         const customTerms = document.getElementById('custom-terms').value.trim();
-        const termsWeapons = document.getElementById('terms-weapons').checked ? 'Prohibición de armas' : '';
-        const termsIllegalSubstances = document.getElementById('terms-illegal-substances').checked ? 'Prohibición de sustancias ilegales' : '';
-
-        const terms = {
-            custom: customTerms || null,
-            predefined: []
-        };
-
-        if (termsWeapons) terms.predefined.push(termsWeapons);
-        if (termsIllegalSubstances) terms.predefined.push(termsIllegalSubstances);
-
-        if (!customTerms && terms.predefined.length === 0) {
-            alert('Por favor, selecciona o redacta al menos un término.');
-            return;
+        const predefinedTerms = [];
+        if (document.getElementById('terms-weapons').checked) {
+            predefinedTerms.push('Prohibición de armas');
+        }
+        if (document.getElementById('terms-illegal-substances').checked) {
+            predefinedTerms.push('Prohibición de sustancias ilegales');
         }
 
-        const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
-        if (!currentUser || !currentUser.username) {
-            alert("Hubo un error al obtener el usuario currentUser. Por favor, inicia sesión nuevamente.");
-            window.location.href = 'index.html';
+        if (!customTerms && predefinedTerms.length === 0) {
+            alert('Debes definir o seleccionar al menos un término o condición.');
             return;
         }
+        // FIN: LÓGICA INTEGRADA (Guardar Términos)
 
         const newPost = {
             id: 'post_' + Date.now(),
-            autor: `${currentUser.nombre} ${currentUser.apellido}`,
-            username: currentUser.username,
+            autor: USER_ID,
+            username: USER_ID, // Añadido para consistencia
             texto,
             privacidad,
             mediaURL: '',
@@ -826,10 +814,8 @@ document.addEventListener('DOMContentLoaded', function() {
             likes: 0,
             likers: [],
             comentarios: [],
-            terms: terms // Incluir términos directamente
+            terms: { custom: customTerms, predefined: predefinedTerms } // Añadido
         };
-
-        console.log('New Post Object:', newPost); // Debugging
 
         if (archivo) {
             const reader = new FileReader();
@@ -841,45 +827,39 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             guardarYActualizarFeed(newPost);
         }
-
-        // Reset inputs
-        document.getElementById('post-text').value = '';
-        document.getElementById('file-media').value = '';
-        document.getElementById('location-display').textContent = 'Ninguna ubicación seleccionada';
-        document.getElementById('publish-button').disabled = true;
-        document.getElementById('custom-terms').value = '';
-        document.getElementById('terms-weapons').checked = false;
-        document.getElementById('terms-illegal-substances').checked = false;
     }
     
     function guardarYActualizarFeed(post) {
         let posts = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
         posts.push(post);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
-
+        
+        // Limpieza del formulario original
         document.getElementById('post-text').value = '';
         document.getElementById('file-media').value = '';
         document.getElementById('location-display').textContent = 'Ninguna ubicación seleccionada';
         document.getElementById('publish-button').disabled = true;
 
-        // Eliminar referencias a selectedTermsDisplay
-        // Reiniciar inputs de términos
+        // INICIO: LÓGICA INTEGRADA (Limpieza de formulario de Términos)
         document.getElementById('custom-terms').value = '';
         document.getElementById('terms-weapons').checked = false;
         document.getElementById('terms-illegal-substances').checked = false;
+        // FIN: LÓGICA INTEGRADA (Limpieza de formulario de Términos)
 
-        if (postPreviewMap) {
+        if(postPreviewMap) {
             postPreviewMap.remove();
             postPreviewMap = null;
             postMapPreviewContainer.style.height = '0px';
         }
-        clearMap(); // Reinicia el estado del mapa
+        clearMap();
         loadPosts();
     }
 
     initExamplePosts();
     loadPosts();
     document.getElementById('publish-button').addEventListener('click', guardarPublicacion);
+
+});
 
     // 1. Objeto con la definición de todos los temas
     const temas = {
@@ -895,7 +875,7 @@ document.addEventListener('DOMContentLoaded', function() {
             btnPrimaryBG: "#00bfff"
         },
         aurora: {
-            headerBG: "linear-gradient(145deg, #1D2B64, #F8CDDA)",
+            headerBG: "linear-gradient(145deg, #F8CDDA, #1D2B64)",
             headerText: "#FFFFFF",
             headerIconBG: "rgba(255, 255, 255, 0.2)",
             bodyBG: "#fdeff2",
@@ -1008,32 +988,37 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 3. Obtener tema guardado y aplicarlo
-    const savedTheme = localStorage.getItem('geoPlannerTheme');
+    const savedTheme = localStorage.getItem('geoPlannerTema');
     if (savedTheme) {
         applyTheme(savedTheme);
     } else {
         applyTheme('default'); // Aplicar tema por defecto si no hay ninguno guardado
     }
+    document.addEventListener("DOMContentLoaded", function() {
+    const nombre = localStorage.getItem("geoPlannerNombre") || "Usuario";
+    const apellido = localStorage.getItem("geoPlannerApellido") || "";
+    const foto = localStorage.getItem("geoPlannerFotoPerfil");
+    const tema = localStorage.getItem("geoPlannerTema") || "default";
 
-    const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
-
-    if (currentUser) {
-      // Actualizar el nombre y otros datos dinámicamente en el menú desplegable
-      const profileNameElement = document.querySelector('#profile-dropdown .fw-bold');
-      const profileImageElement = document.querySelector('#profile-dropdown img');
-
-      if (profileNameElement) {
-        profileNameElement.textContent = `${currentUser.nombre} ${currentUser.apellido}` || 'Usuario';
-      }
-
-      if (profileImageElement) {
-        profileImageElement.src = currentUser.profileImage || 'img/placeholder.png';
-      }
-    } else {
-      // Si no hay usuario en sessionStorage, redirigir al inicio de sesión
-      window.location.href = 'index.html';
+    // Cambiar nombre en header o perfil
+    document.querySelectorAll(".nombre-usuario").forEach(el => {
+    el.textContent = `${nombre} ${apellido}`;
+    });
+    
+    // Cambiar foto de perfil
+    if (foto) {
+        document.querySelectorAll(".foto-usuario").forEach(el => {
+        el.src = foto;
+        });
     }
-  });
+
+    // Aplicar tema visual
+    if (tema !== "default") {
+        document.body.classList.add(`tema-${tema}`);
+    }
+    });
+
+    
 </script>
 </body>
 </html>
