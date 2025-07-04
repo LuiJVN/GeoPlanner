@@ -365,6 +365,7 @@
             <button id="view-toggle-btn" class="btn btn-outline-light btn-sm">Ver Feed Clásico</button>
             <div class="icon-bar d-flex gap-2">
                 <span class="icon-button" id="map-styles-icon" title="Estilos de Mapa">🗺️</span>
+
                 <div class="dropdown-content" id="map-styles-dropdown">
                     <div class="dropdown-header">Estilos de Mapa</div>
                     <div class="map-style-item active" data-style="openstreetmap">
@@ -381,13 +382,14 @@
                             <br><small>Imágenes satelitales</small>
                         </div>
                     </div>
+                    <!--
                     <div class="map-style-item" data-style="terrain">
                         <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjVGNUY1Ii8+Cjxwb2x5Z29uIHBvaW50cz0iMTAsNDAgMjAsMTUgMzAsMjUgNDAsNSA1MCwyMCA2MCw0MCIgZmlsbD0iIzk4NzY1NCIvPgo8L3N2Zz4=')"></div>
                         <div>
                             <strong>Terreno</strong>
                             <br><small>Relieve y topografía</small>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="map-style-item" data-style="dark">
                         <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjMkYyRjJGIi8+CjxwYXRoIGQ9Ik0xMCAzMEwyMCAyMEwzMCAzMEw0MCAyMEw1MCAzMCIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+')"></div>
                         <div>
@@ -666,11 +668,6 @@
                     name: 'Vista Satelital',
                     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                     attribution: '© Esri'
-                },
-                terrain: {
-                    name: 'Terreno',
-                    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-                    attribution: '© OpenTopoMap contributors'
                 },
                 dark: {
                     name: 'Modo Oscuro',
