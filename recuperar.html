@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,47 +15,29 @@
       <div class="logo-drop">
         <img src="img/Logo.png" alt="Logo GeoPlanner" class="logo-spin" />
       </div>
-      <h2 class="mb-4">¿Necesitas ayuda para ingresar?</h2>
+    </main>
 
-      <p>Selecciona una opción para recuperar tu cuenta:</p>
-
-      <div class="mb-3 d-flex justify-content-center gap-3">
-        <button class="btn btn-light" onclick="mostrarFormulario('usuario')">Recuperar Usuario</button>
-        <button class="btn btn-light" onclick="mostrarFormulario('clave')">Recuperar Contraseña</button>
+    <footer class="footer-bar mt-auto w-100">
+      <div
+        class="container-fluid d-flex flex-wrap justify-content-between align-items-center px-4 py-3"
+      >
+        <span
+          >© 2025 GeoPlanner. Todos los derechos reservados — equipo 1.</span
+        >
+        <div class="d-flex flex-wrap gap-3">
+          <a href="#">Español (ES)</a>
+          <a href="#">English (EN)</a>
+        </div>
       </div>
+    </footer>
 
-      <!-- Formulario para recuperar usuario -->
-      <form id="form-usuario" class="form-section mt-3 text-start">
-        <label for="correo-usuario" class="form-label">Correo electrónico asociado</label>
-        <input type="email" id="correo-usuario" class="form-control mb-3" placeholder="ejemplo@correo.com" required />
-        <button type="submit" class="btn btn-custom w-100">Enviar usuario</button>
-      </form>
-
-      <!-- Formulario para recuperar contraseña -->
-      <form id="form-clave" class="form-section mt-3 text-start">
-        <label for="usuario-clave" class="form-label">@Nombre de usuario</label>
-        <input type="text" id="usuario-clave" class="form-control mb-3" placeholder="@usuario" required />
-        <button type="submit" class="btn btn-custom w-100">Enviar enlace de recuperación</button>
-      </form>
-    </div>
-  </main>
-
-  <footer class="footer-bar mt-auto w-100">
-    <div class="container-fluid d-flex flex-wrap justify-content-between align-items-center px-4 py-3">
-      <span>© 2025 GeoPlanner. Todos los derechos reservados — equipo 1.</span>
-      <div class="d-flex flex-wrap gap-3">
-        <a href="#">Español (ES)</a>
-        <a href="#">English (EN)</a>
-      </div>
-    </div>
-  </footer>
-
-  <script>
-    function mostrarFormulario(opcion) {
-      document.getElementById('form-usuario').style.display = opcion === 'usuario' ? 'block' : 'none';
-      document.getElementById('form-clave').style.display = opcion === 'clave' ? 'block' : 'none';
-    }
-  </script>
-
-</body>
+    <script>
+      function mostrarFormulario(opcion) {
+        document.getElementById("form-usuario").style.display =
+          opcion === "usuario" ? "block" : "none";
+        document.getElementById("form-clave").style.display =
+          opcion === "clave" ? "block" : "none";
+      }
+    </script>
+  </body>
 </html>
