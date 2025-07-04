@@ -463,7 +463,8 @@
                             <input type="file" id="file-media" class="form-control" accept="image/*" />
                         </div>
                         <div class="mb-3">
-                            <button class="btn btn-outline-primary w-100" type="button" data-bs-toggle="modal" data-bs-target="#map-select-modal">
+                            <!-- FIX: Removed data-bs-* attributes and added an ID -->
+                            <button class="btn btn-outline-primary w-100" type="button" id="open-map-modal-btn">
                                 📍 Seleccionar Ubicación
                             </button>
                             <div id="location-display" class="mt-2">No se ha seleccionado ninguna ubicación.</div>
@@ -513,7 +514,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Define la ubicación</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" data-bs-target="#create-post-modal" data-bs-toggle="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <ul class="nav nav-tabs" role="tablist">
@@ -524,9 +525,8 @@
                             <button class="nav-link" id="multiple-route-tab">➯ Ruta Múltiple</button>
                         </li>
                     </ul>
-                    <p class="form-text mt-2">
-                        <strong>Ruta Simple:</strong> Un único marcador.<br>
-                        <strong>Ruta Múltiple:</strong> Traza una ruta con varios puntos.
+                    <p class="form-text mt-2" id="route-info-text">
+                        <strong>Ruta Simple:</strong> Haz clic en el mapa para colocar un único marcador para tu evento.
                     </p>
                     <div id="modal-map-container"></div>
                     <div id="ruta-inputs" class="mt-3"></div>
@@ -599,9 +599,14 @@
             let agendaItems = [];
             let savedEvents = [];
 
-            const createPostModal = new bootstrap.Modal(document.getElementById('create-post-modal'));
+            // --- FIX: Modal instances for proper sequential handling ---
+            const createPostModalEl = document.getElementById('create-post-modal');
+            const createPostModal = new bootstrap.Modal(createPostModalEl);
+            const mapSelectModalEl = document.getElementById('map-select-modal');
+            const mapSelectModal = new bootstrap.Modal(mapSelectModalEl);
             const agendaModal = new bootstrap.Modal(document.getElementById('agenda-modal'));
             const savedEventsModal = new bootstrap.Modal(document.getElementById('saved-events-modal'));
+
 
             // --- THEME LOGIC ---
             const temas = {
@@ -697,61 +702,48 @@
                 }
             };
 
-            // 2. Función para aplicar el tema
             function applyTheme(themeName) {
                 const root = document.documentElement;
-                const theme = temas[themeName] || temas.noche; // Usar 'noche' como predeterminado si no se encuentra
-
+                const theme = temas[themeName] || temas.noche;
                 root.style.setProperty('--header-bg', theme.headerBG);
                 root.style.setProperty('--header-text-color', theme.headerText);
                 root.style.setProperty('--header-icon-bg', theme.headerIconBG);
                 root.style.setProperty('--header-icon-hover-bg', `rgba(255, 255, 255, 0.25)`);
-
                 root.style.setProperty('--body-bg', theme.bodyBG);
-                
                 root.style.setProperty('--sidebar-bg', theme.sidebarBG);
                 root.style.setProperty('--sidebar-text-color', theme.sidebarText);
                 root.style.setProperty('--sidebar-hover-bg', `rgba(255, 255, 255, 0.15)`);
-
                 root.style.setProperty('--card-bg', theme.cardBG);
                 root.style.setProperty('--card-text-color', theme.cardText);
-                
                 root.style.setProperty('--btn-primary-bg', theme.btnPrimaryBG);
-                root.style.setProperty('--btn-primary-text', theme.headerText); // A menudo el texto del botón coincide con el del header
+                root.style.setProperty('--btn-primary-text', theme.headerText);
             }
 
-            // 3. Obtener tema guardado y aplicarlo
             const savedTheme = localStorage.getItem('geoPlannerTema');
             if (savedTheme) {
                 applyTheme(savedTheme);
             } else {
-                applyTheme('default'); // Aplicar tema por defecto si no hay ninguno guardado
+                applyTheme('default');
             }
 
-            // --- DATA INITIALIZATION & MANAGEMENT ---
             function initData() {
-                // Cargar y mostrar datos del usuario desde localStorage
                 const nombre = localStorage.getItem("geoPlannerNombre") || "Usuario";
                 const apellido = localStorage.getItem("geoPlannerApellido") || "";
                 const foto = localStorage.getItem("geoPlannerFotoPerfil");
                 const tema = localStorage.getItem("geoPlannerTema") || "default";
 
-                // Actualizar el objeto currentUser para la lógica interna (como USER_ID)
                 currentUser.nombre = `${nombre} ${apellido}`.trim();
                 currentUser.foto = foto;
 
-                // Actualizar nombre en el perfil y en el widget de creación
                 document.querySelector('.nombre-usuario').textContent = currentUser.nombre;
                 document.querySelector('.nombre-usuario-short').textContent = nombre.split(' ')[0];
 
-                // Actualizar foto de perfil en todos los elementos relevantes
                 if (foto) {
                     document.querySelectorAll(".foto-usuario").forEach(el => {
                         el.src = foto;
                     });
                 }
 
-                // Cargar publicaciones, agenda y eventos guardados
                 const examplePosts = [{
                     id: 'post_1',
                     author: 'ana_gomez',
@@ -803,11 +795,9 @@
                 agendaItems = JSON.parse(localStorage.getItem(STORAGE_KEY_AGENDA + USER_ID)) || [];
                 savedEvents = JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED + USER_ID)) || [];
 
-                // Aplicar el tema guardado
                 applyTheme(tema);
             }
 
-            // --- VIEW MANAGEMENT & RENDERING ---
             function toggleView() {
                 currentView = (currentView === 'map') ? 'classic' : 'map';
                 document.getElementById('view-toggle-btn').textContent = currentView === 'map' ? 'Ver Feed Clásico' : 'Ver Vista de Mapa';
@@ -941,7 +931,6 @@
                 renderMapMarkers(document.getElementById('map-filter-type').value);
             }
 
-            // --- INTERACTION LOGIC ---
             function toggleLike(postId) {
                 const post = allPosts.find(p => p.id === postId);
                 if (!post) return;
@@ -986,7 +975,6 @@
                 refreshUI();
             }
 
-            // --- MAPS & MODALS LOGIC ---
             function initMainMap() {
                 mainMap = L.map('feed-map').setView([10.654, -71.612], 12);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mainMap);
@@ -1239,7 +1227,26 @@
                     e.target.reset();
                 });
 
-                const mapSelectModalEl = document.getElementById('map-select-modal');
+                // --- FIX: Sequential Modal Handling Logic ---
+
+                // Button to open the map modal from the create post modal
+                document.getElementById('open-map-modal-btn').addEventListener('click', () => {
+                    // When the create modal is hidden, show the map modal.
+                    // { once: true } ensures this listener is removed after it runs once.
+                    createPostModalEl.addEventListener('hidden.bs.modal', () => {
+                        mapSelectModal.show();
+                    }, {
+                        once: true
+                    });
+                    createPostModal.hide();
+                });
+
+                // When the map modal is closed (for any reason), show the create modal again.
+                mapSelectModalEl.addEventListener('hidden.bs.modal', () => {
+                    createPostModal.show();
+                });
+
+                // Initialize map when modal is shown
                 mapSelectModalEl.addEventListener('shown.bs.modal', function() {
                     if (!selectionMap) {
                         selectionMap = L.map('modal-map-container').setView([10.654, -71.612], 13);
@@ -1258,6 +1265,7 @@
                     }
                     setTimeout(() => selectionMap.invalidateSize(), 10);
                 });
+
                 const clearSelectionMap = () => {
                     selectedMarkers.forEach(m => selectionMap.removeLayer(m));
                     selectedMarkers = [];
@@ -1267,22 +1275,36 @@
                     }
                 };
                 document.getElementById('clear-map-button').addEventListener('click', clearSelectionMap);
-                document.getElementById('simple-route-tab').addEventListener('click', () => {
+
+                const simpleRouteTab = document.getElementById('simple-route-tab');
+                const multipleRouteTab = document.getElementById('multiple-route-tab');
+                const routeInfoText = document.getElementById('route-info-text');
+                const locationModalTitle = document.querySelector('#map-select-modal .modal-title');
+
+                simpleRouteTab.addEventListener('click', () => {
                     routeType = 'simple';
                     clearSelectionMap();
+                    simpleRouteTab.classList.add('active');
+                    multipleRouteTab.classList.remove('active');
+                    locationModalTitle.textContent = 'Define la ubicación: Ruta Simple';
+                    routeInfoText.innerHTML = '<strong>Ruta Simple:</strong> Haz clic en el mapa para colocar un único marcador para tu evento.';
                 });
-                document.getElementById('multiple-route-tab').addEventListener('click', () => {
+
+                multipleRouteTab.addEventListener('click', () => {
                     routeType = 'multiple';
                     clearSelectionMap();
+                    multipleRouteTab.classList.add('active');
+                    simpleRouteTab.classList.remove('active');
+                    locationModalTitle.textContent = 'Define la ubicación: Ruta Múltiple';
+                    routeInfoText.innerHTML = '<strong>Ruta Múltiple:</strong> Haz clic en el mapa para añadir varios puntos y trazar una ruta.';
                 });
+
                 document.getElementById('accept-location-button').addEventListener('click', () => {
                     if (selectedMarkers.length > 0) {
                         const latlngs = selectedMarkers.map(m => m.getLatLng());
                         document.getElementById('location-display').textContent = routeType === 'simple' ? `Ubicación: [${latlngs[0].lat.toFixed(4)}, ${latlngs[0].lng.toFixed(4)}]` : `Ruta Múltiple (${selectedMarkers.length} puntos)`;
-                        bootstrap.Modal.getInstance(mapSelectModalEl).hide();
-                    } else {
-                        alert("Por favor, selecciona al menos un punto.");
                     }
+                    mapSelectModal.hide();
                 });
 
                 const termsDefaultRadio = document.getElementById('terms-default-radio');
