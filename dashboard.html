@@ -388,6 +388,13 @@
                             <br><small>Relieve y topografía</small>
                         </div>
                     </div>
+                    <div class="map-style-item" data-style="dark">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjMkYyRjJGIi8+CjxwYXRoIGQ9Ik0xMCAzMEwyMCAyMEwzMCAzMEw0MCAyMEw1MCAzMCIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+')"></div>
+                        <div>
+                            <strong>Modo Oscuro</strong>
+                            <br><small>Tema oscuro para la noche</small>
+                        </div>
+                    </div>
                 </div>
 
                 <span class="icon-button" id="notifications-icon" title="Notificaciones">🔔</span>
@@ -659,6 +666,11 @@
                     name: 'Vista Satelital',
                     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                     attribution: '© Esri'
+                },
+                terrain: {
+                    name: 'Terreno',
+                    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+                    attribution: '© OpenTopoMap contributors'
                 },
                 dark: {
                     name: 'Modo Oscuro',
