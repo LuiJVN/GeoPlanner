@@ -270,6 +270,7 @@
             transition: background-color 0.2s;
             color: var(--card-text-color);
             text-decoration: none;
+            cursor: pointer;
         }
 
         .dropdown-item-custom:hover {
@@ -316,6 +317,37 @@
             width: 1rem;
             height: 1rem;
         }
+
+        .map-style-preview {
+            width: 60px;
+            height: 40px;
+            border-radius: 4px;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid transparent;
+        }
+
+        .map-style-preview.active {
+            border-color: var(--btn-primary-bg);
+        }
+
+        .map-style-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .map-style-item:hover {
+            background-color: var(--body-bg);
+        }
+
+        .map-style-item.active {
+            background-color: var(--body-bg);
+        }
     </style>
 </head>
 
@@ -323,7 +355,7 @@
 
     <header class="d-flex justify-content-between align-items-center">
         <a href="dashboard.html" class="d-flex align-items-center gap-2 text-white text-decoration-none">
-            <img src="img/LogoMini.png" alt="Logo" style="width: 36px;" />
+            <img src="/placeholder.svg?height=36&width=36" alt="Logo" style="width: 36px;" />
             <strong class="fs-5">GeoPlanner</strong>
         </a>
         <div class="search-bar">
@@ -332,26 +364,51 @@
         <div class="d-flex align-items-center gap-3">
             <button id="view-toggle-btn" class="btn btn-outline-light btn-sm">Ver Feed Clásico</button>
             <div class="icon-bar d-flex gap-2">
-                <span class="icon-button" id="requests-icon" title="Solicitudes de amistad">🤝</span>
-                <div class="dropdown-content" id="requests-dropdown">
-                    <div class="dropdown-header">Solicitudes de amistad</div>
-                    <a href="#" class="dropdown-item-custom">
-                        <img src="img/placeholder.png" alt="user">
+                <span class="icon-button" id="map-styles-icon" title="Estilos de Mapa">🗺️</span>
+                <div class="dropdown-content" id="map-styles-dropdown">
+                    <div class="dropdown-header">Estilos de Mapa</div>
+                    <div class="map-style-item active" data-style="openstreetmap">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjJGMkYyIi8+CjxwYXRoIGQ9Ik0xMCAzMEwyMCAyMEwzMCAzMEw0MCAyMEw1MCAzMCIgc3Ryb2tlPSIjQ0NDIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+')"></div>
                         <div>
-                            <strong>Ana Rodriguez</strong> quiere ser tu amiga.
-                            <div class="d-flex gap-2 mt-2">
-                                <button class="btn btn-primary btn-sm">Aceptar</button>
-                                <button class="btn btn-secondary btn-sm">Rechazar</button>
-                            </div>
+                            <strong>OpenStreetMap</strong>
+                            <br><small>Mapa estándar con calles</small>
                         </div>
-                    </a>
+                    </div>
+                    <div class="map-style-item" data-style="satellite">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjNEE5MDQyIi8+CjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjE1IiBmaWxsPSIjNjhCMDVGIi8+CjxyZWN0IHg9IjM1IiB5PSIxNSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjOEFEMDgxIi8+Cjwvc3ZnPg==')"></div>
+                        <div>
+                            <strong>Vista Satelital</strong>
+                            <br><small>Imágenes satelitales</small>
+                        </div>
+                    </div>
+                    <div class="map-style-item" data-style="terrain">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjVGNUY1Ii8+Cjxwb2x5Z29uIHBvaW50cz0iMTAsNDAgMjAsMTUgMzAsMjUgNDAsNSA1MCwyMCA2MCw0MCIgZmlsbD0iIzk4NzY1NCIvPgo8L3N2Zz4=')"></div>
+                        <div>
+                            <strong>Terreno</strong>
+                            <br><small>Relieve y topografía</small>
+                        </div>
+                    </div>
+                    <div class="map-style-item" data-style="dark">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjMkYyRjJGIi8+CjxwYXRoIGQ9Ik0xMCAzMEwyMCAyMEwzMCAzMEw0MCAyMEw1MCAzMCIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+')"></div>
+                        <div>
+                            <strong>Modo Oscuro</strong>
+                            <br><small>Tema oscuro para la noche</small>
+                        </div>
+                    </div>
+                    <div class="map-style-item" data-style="watercolor">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRkZGOEYwIi8+CjxjaXJjbGUgY3g9IjE1IiBjeT0iMTUiIHI9IjgiIGZpbGw9IiNGRkM5QzkiIG9wYWNpdHk9IjAuNyIvPgo8Y2lyY2xlIGN4PSI0NSIgY3k9IjI1IiByPSI2IiBmaWxsPSIjQzlEMUZGIiBvcGFjaXR5PSIwLjciLz4KPC9zdmc+')"></div>
+                        <div>
+                            <strong>Acuarela</strong>
+                            <br><small>Estilo artístico</small>
+                        </div>
+                    </div>
                 </div>
 
                 <span class="icon-button" id="notifications-icon" title="Notificaciones">🔔</span>
                 <div class="dropdown-content" id="notifications-dropdown">
                     <div class="dropdown-header">Notificaciones</div>
                     <a href="#" class="dropdown-item-custom">
-                        <img src="img/estudio.jpg" alt="event">
+                        <img src="/placeholder.svg?height=50&width=50" alt="event">
                         <div><strong>@carlos_martinez</strong> comentó en tu publicación.</div>
                     </a>
                 </div>
@@ -359,7 +416,7 @@
                 <span class="icon-button" id="profile-icon" title="Perfil">👤</span>
                 <div class="dropdown-content" id="profile-dropdown">
                     <a href="perfil.html" class="dropdown-item-custom">
-                        <img class="foto-usuario" src="img/placeholder.png" alt="profile">
+                        <img class="foto-usuario" src="/placeholder.svg?height=50&width=50" alt="profile">
                         <div>
                             <span class="nombre-usuario">Usuario</span>
                             <svg class="geoplanner-verified-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -409,7 +466,7 @@
                 <div id="classic-feed-view">
                     <div class="create-post-widget">
                         <div class="d-flex align-items-center gap-2">
-                            <img src="img/placeholder.png" class="foto-usuario" alt="user" style="width: 40px; height: 40px; border-radius: 50%;">
+                            <img src="/placeholder.svg?height=40&width=40" class="foto-usuario" alt="user" style="width: 40px; height: 40px; border-radius: 50%;">
                             <div class="create-post-widget-input" data-bs-toggle="modal" data-bs-target="#create-post-modal">
                                 ¿Qué estás organizando, <span class="nombre-usuario-short">Usuario</span>?
                             </div>
@@ -598,10 +655,36 @@
             let allPosts = [];
             let agendaItems = [];
             let savedEvents = [];
+            let currentMapStyle = 'openstreetmap';
+            let currentTileLayer = null;
 
             const createPostModal = new bootstrap.Modal(document.getElementById('create-post-modal'));
             const agendaModal = new bootstrap.Modal(document.getElementById('agenda-modal'));
             const savedEventsModal = new bootstrap.Modal(document.getElementById('saved-events-modal'));
+
+            // Map styles configuration
+            const mapStyles = {
+                openstreetmap: {
+                    name: 'OpenStreetMap',
+                    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    attribution: '© OpenStreetMap contributors'
+                },
+                satellite: {
+                    name: 'Vista Satelital',
+                    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                    attribution: '© Esri'
+                },
+                terrain: {
+                    name: 'Terreno',
+                    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+                    attribution: '© OpenTopoMap contributors'
+                },
+                dark: {
+                    name: 'Modo Oscuro',
+                    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+                    attribution: '© CartoDB'
+                }
+            };
 
             // --- THEME LOGIC ---
             const temas = {
@@ -728,6 +811,48 @@
                 applyTheme('default'); // Aplicar tema por defecto si no hay ninguno guardado
             }
 
+            // --- MAP STYLE FUNCTIONS ---
+            function changeMapStyle(styleName) {
+                if (!mapStyles[styleName]) return;
+                
+                currentMapStyle = styleName;
+                const style = mapStyles[styleName];
+                
+                // Update main map
+                if (mainMap && currentTileLayer) {
+                    mainMap.removeLayer(currentTileLayer);
+                }
+                currentTileLayer = L.tileLayer(style.url, {
+                    attribution: style.attribution
+                });
+                if (mainMap) {
+                    currentTileLayer.addTo(mainMap);
+                }
+                
+                // Update selection map if it exists
+                if (selectionMap) {
+                    selectionMap.eachLayer(layer => {
+                        if (layer instanceof L.TileLayer) {
+                            selectionMap.removeLayer(layer);
+                        }
+                    });
+                    L.tileLayer(style.url, {
+                        attribution: style.attribution
+                    }).addTo(selectionMap);
+                }
+                
+                // Update UI
+                document.querySelectorAll('.map-style-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.style === styleName) {
+                        item.classList.add('active');
+                    }
+                });
+                
+                // Save preference
+                localStorage.setItem('geoplanner_map_style', styleName);
+            }
+
             // --- DATA INITIALIZATION & MANAGEMENT ---
             function initData() {
                 // Cargar y mostrar datos del usuario desde localStorage
@@ -750,6 +875,10 @@
                         el.src = foto;
                     });
                 }
+
+                // Load saved map style
+                const savedMapStyle = localStorage.getItem('geoplanner_map_style') || 'openstreetmap';
+                currentMapStyle = savedMapStyle;
 
                 // Cargar publicaciones, agenda y eventos guardados
                 const examplePosts = [{
@@ -887,7 +1016,13 @@
                             zoomControl: false,
                             scrollWheelZoom: false
                         }).setView(latlngs[0], 13);
-                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(postMap);
+                        
+                        // Use current map style for post maps
+                        const style = mapStyles[currentMapStyle];
+                        L.tileLayer(style.url, {
+                            attribution: style.attribution
+                        }).addTo(postMap);
+                        
                         latlngs.forEach(latlng => L.marker(latlng).addTo(postMap));
                         if (latlngs.length > 1) {
                             const polyline = L.polyline(latlngs, {
@@ -919,7 +1054,13 @@
                             zoomControl: false,
                             scrollWheelZoom: false
                         }).setView(latlngs[0], 13);
-                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(postMap);
+                        
+                        // Use current map style for saved post maps
+                        const style = mapStyles[currentMapStyle];
+                        L.tileLayer(style.url, {
+                            attribution: style.attribution
+                        }).addTo(postMap);
+                        
                         latlngs.forEach(latlng => L.marker(latlng).addTo(postMap));
                         if (latlngs.length > 1) {
                             const polyline = L.polyline(latlngs, {
@@ -989,7 +1130,12 @@
             // --- MAPS & MODALS LOGIC ---
             function initMainMap() {
                 mainMap = L.map('feed-map').setView([10.654, -71.612], 12);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mainMap);
+                
+                // Apply saved map style
+                const style = mapStyles[currentMapStyle];
+                currentTileLayer = L.tileLayer(style.url, {
+                    attribution: style.attribution
+                }).addTo(mainMap);
             }
 
             function renderMapMarkers(filterType = 'all') {
@@ -1140,15 +1286,37 @@
                 });
                 document.getElementById('menu-guardados').addEventListener('click', renderSavedEvents);
 
+                // Map styles dropdown functionality
+                const mapStylesIcon = document.getElementById('map-styles-icon');
+                const mapStylesDropdown = document.getElementById('map-styles-dropdown');
+                
+                mapStylesIcon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isShown = mapStylesDropdown.classList.contains('show');
+                    closeAllDropdowns();
+                    if (!isShown) mapStylesDropdown.classList.add('show');
+                });
+
+                // Map style selection
+                document.querySelectorAll('.map-style-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const styleName = item.dataset.style;
+                        changeMapStyle(styleName);
+                        mapStylesDropdown.classList.remove('show');
+                    });
+                });
+
                 const dropdownIcons = {
-                    'requests-icon': 'requests-dropdown',
                     'notifications-icon': 'notifications-dropdown',
                     'profile-icon': 'profile-dropdown'
                 };
-                const closeAllDropdowns = () => Object.values(dropdownIcons).forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.classList.remove('show');
-                });
+                const closeAllDropdowns = () => {
+                    document.getElementById('map-styles-dropdown').classList.remove('show');
+                    Object.values(dropdownIcons).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.classList.remove('show');
+                    });
+                };
                 Object.keys(dropdownIcons).forEach(iconId => {
                     const icon = document.getElementById(iconId);
                     const dropdown = document.getElementById(dropdownIcons[iconId]);
@@ -1243,7 +1411,13 @@
                 mapSelectModalEl.addEventListener('shown.bs.modal', function() {
                     if (!selectionMap) {
                         selectionMap = L.map('modal-map-container').setView([10.654, -71.612], 13);
-                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(selectionMap);
+                        
+                        // Use current map style for selection map
+                        const style = mapStyles[currentMapStyle];
+                        L.tileLayer(style.url, {
+                            attribution: style.attribution
+                        }).addTo(selectionMap);
+                        
                         selectionMap.on('click', (e) => {
                             if (routeType === 'simple' && selectedMarkers.length > 0) clearSelectionMap();
                             const newMarker = L.marker(e.latlng).addTo(selectionMap);
