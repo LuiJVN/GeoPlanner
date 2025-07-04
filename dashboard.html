@@ -16,7 +16,7 @@
 
     <header class="d-flex justify-content-between align-items-center">
         <a href="dashboard.html" class="d-flex align-items-center gap-2 text-white text-decoration-none">
-            <img src="img/LogoMini.png" alt="Logo" style="width: 36px;" />
+            <img src="/placeholder.svg?height=36&width=36" alt="Logo" style="width: 36px;" />
             <strong class="fs-5">GeoPlanner</strong>
         </a>
         <div class="search-bar">
@@ -25,26 +25,46 @@
         <div class="d-flex align-items-center gap-3">
             <button id="view-toggle-btn" class="btn btn-outline-light btn-sm">Ver Feed Clásico</button>
             <div class="icon-bar d-flex gap-2">
-                <span class="icon-button" id="requests-icon" title="Solicitudes de amistad">🤝</span>
-                <div class="dropdown-content" id="requests-dropdown">
-                    <div class="dropdown-header">Solicitudes de amistad</div>
-                    <a href="#" class="dropdown-item-custom">
-                        <img src="img/placeholder.png" alt="user">
+                <span class="icon-button" id="map-styles-icon" title="Estilos de Mapa">🗺️</span>
+
+                <div class="dropdown-content" id="map-styles-dropdown">
+                    <div class="dropdown-header">Estilos de Mapa</div>
+                    <div class="map-style-item active" data-style="openstreetmap">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjJGMkYyIi8+CjxwYXRoIGQ9Ik0xMCAzMEwyMCAyMEwzMCAzMEw0MCAyMEw1MCAzMCIgc3Ryb2tlPSIjQ0NDIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+')"></div>
                         <div>
-                            <strong>Ana Rodriguez</strong> quiere ser tu amiga.
-                            <div class="d-flex gap-2 mt-2">
-                                <button class="btn btn-primary btn-sm">Aceptar</button>
-                                <button class="btn btn-secondary btn-sm">Rechazar</button>
-                            </div>
+                            <strong>OpenStreetMap</strong>
+                            <br><small>Mapa estándar con calles</small>
                         </div>
-                    </a>
+                    </div>
+                    <div class="map-style-item" data-style="satellite">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjNEE5MDQyIi8+CjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjE1IiBmaWxsPSIjNjhCMDVGIi8+CjxyZWN0IHg9IjM1IiB5PSIxNSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjOEFEMDgxIi8+Cjwvc3ZnPg==')"></div>
+                        <div>
+                            <strong>Vista Satelital</strong>
+                            <br><small>Imágenes satelitales</small>
+                        </div>
+                    </div>
+                    <!--
+                    <div class="map-style-item" data-style="terrain">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjVGNUY1Ii8+Cjxwb2x5Z29uIHBvaW50cz0iMTAsNDAgMjAsMTUgMzAsMjUgNDAsNSA1MCwyMCA2MCw0MCIgZmlsbD0iIzk4NzY1NCIvPgo8L3N2Zz4=')"></div>
+                        <div>
+                            <strong>Terreno</strong>
+                            <br><small>Relieve y topografía</small>
+                        </div>
+                    </div> -->
+                    <div class="map-style-item" data-style="dark">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjMkYyRjJGIi8+CjxwYXRoIGQ9Ik0xMCAzMEwyMCAyMEwzMCAzMEw0MCAyMEw1MCAzMCIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+')"></div>
+                        <div>
+                            <strong>Modo Oscuro</strong>
+                            <br><small>Tema oscuro para la noche</small>
+                        </div>
+                    </div>
                 </div>
 
                 <span class="icon-button" id="notifications-icon" title="Notificaciones">🔔</span>
                 <div class="dropdown-content" id="notifications-dropdown">
                     <div class="dropdown-header">Notificaciones</div>
                     <a href="#" class="dropdown-item-custom">
-                        <img src="img/estudio.jpg" alt="event">
+                        <img src="/placeholder.svg?height=50&width=50" alt="event">
                         <div><strong>@carlos_martinez</strong> comentó en tu publicación.</div>
                     </a>
                 </div>
@@ -52,7 +72,7 @@
                 <span class="icon-button" id="profile-icon" title="Perfil">👤</span>
                 <div class="dropdown-content" id="profile-dropdown">
                     <a href="perfil.html" class="dropdown-item-custom">
-                        <img class="foto-usuario" src="img/placeholder.png" alt="profile">
+                        <img class="foto-usuario" src="/placeholder.svg?height=50&width=50" alt="profile">
                         <div>
                             <span class="nombre-usuario">Usuario</span>
                             <svg class="geoplanner-verified-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -102,7 +122,7 @@
                 <div id="classic-feed-view">
                     <div class="create-post-widget">
                         <div class="d-flex align-items-center gap-2">
-                            <img src="img/placeholder.png" class="foto-usuario" alt="user" style="width: 40px; height: 40px; border-radius: 50%;">
+                            <img src="/placeholder.svg?height=40&width=40" class="foto-usuario" alt="user" style="width: 40px; height: 40px; border-radius: 50%;">
                             <div class="create-post-widget-input" data-bs-toggle="modal" data-bs-target="#create-post-modal">
                                 ¿Qué estás organizando, <span class="nombre-usuario-short">Usuario</span>?
                             </div>
@@ -156,8 +176,7 @@
                             <input type="file" id="file-media" class="form-control" accept="image/*" />
                         </div>
                         <div class="mb-3">
-                            <!-- FIX: Removed data-bs-* attributes and added an ID -->
-                            <button class="btn btn-outline-primary w-100" type="button" id="open-map-modal-btn">
+                            <button class="btn btn-outline-primary w-100" type="button" data-bs-toggle="modal" data-bs-target="#map-select-modal">
                                 📍 Seleccionar Ubicación
                             </button>
                             <div id="location-display" class="mt-2">No se ha seleccionado ninguna ubicación.</div>
@@ -207,7 +226,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Define la ubicación</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" data-bs-target="#create-post-modal" data-bs-toggle="modal"></button>
                 </div>
                 <div class="modal-body">
                     <ul class="nav nav-tabs" role="tablist">
@@ -218,8 +237,9 @@
                             <button class="nav-link" id="multiple-route-tab">➯ Ruta Múltiple</button>
                         </li>
                     </ul>
-                    <p class="form-text mt-2" id="route-info-text">
-                        <strong>Ruta Simple:</strong> Haz clic en el mapa para colocar un único marcador para tu evento.
+                    <p class="form-text mt-2">
+                        <strong>Ruta Simple:</strong> Un único marcador.<br>
+                        <strong>Ruta Múltiple:</strong> Traza una ruta con varios puntos.
                     </p>
                     <div id="modal-map-container"></div>
                     <div id="ruta-inputs" class="mt-3"></div>
@@ -291,15 +311,31 @@
             let allPosts = [];
             let agendaItems = [];
             let savedEvents = [];
+            let currentMapStyle = 'openstreetmap';
+            let currentTileLayer = null;
 
-            // --- FIX: Modal instances for proper sequential handling ---
-            const createPostModalEl = document.getElementById('create-post-modal');
-            const createPostModal = new bootstrap.Modal(createPostModalEl);
-            const mapSelectModalEl = document.getElementById('map-select-modal');
-            const mapSelectModal = new bootstrap.Modal(mapSelectModalEl);
+            const createPostModal = new bootstrap.Modal(document.getElementById('create-post-modal'));
             const agendaModal = new bootstrap.Modal(document.getElementById('agenda-modal'));
             const savedEventsModal = new bootstrap.Modal(document.getElementById('saved-events-modal'));
 
+            // Map styles configuration
+            const mapStyles = {
+                openstreetmap: {
+                    name: 'OpenStreetMap',
+                    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    attribution: '© OpenStreetMap contributors'
+                },
+                satellite: {
+                    name: 'Vista Satelital',
+                    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                    attribution: '© Esri'
+                },
+                dark: {
+                    name: 'Modo Oscuro',
+                    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+                    attribution: '© CartoDB'
+                }
+            };
 
             // --- THEME LOGIC ---
             const temas = {
@@ -395,48 +431,107 @@
                 }
             };
 
+            // 2. Función para aplicar el tema
             function applyTheme(themeName) {
                 const root = document.documentElement;
-                const theme = temas[themeName] || temas.noche;
+                const theme = temas[themeName] || temas.noche; // Usar 'noche' como predeterminado si no se encuentra
+
                 root.style.setProperty('--header-bg', theme.headerBG);
                 root.style.setProperty('--header-text-color', theme.headerText);
                 root.style.setProperty('--header-icon-bg', theme.headerIconBG);
                 root.style.setProperty('--header-icon-hover-bg', `rgba(255, 255, 255, 0.25)`);
+
                 root.style.setProperty('--body-bg', theme.bodyBG);
+                
                 root.style.setProperty('--sidebar-bg', theme.sidebarBG);
                 root.style.setProperty('--sidebar-text-color', theme.sidebarText);
                 root.style.setProperty('--sidebar-hover-bg', `rgba(255, 255, 255, 0.15)`);
+
                 root.style.setProperty('--card-bg', theme.cardBG);
                 root.style.setProperty('--card-text-color', theme.cardText);
+                
                 root.style.setProperty('--btn-primary-bg', theme.btnPrimaryBG);
-                root.style.setProperty('--btn-primary-text', theme.headerText);
+                root.style.setProperty('--btn-primary-text', theme.headerText); // A menudo el texto del botón coincide con el del header
             }
 
+            // 3. Obtener tema guardado y aplicarlo
             const savedTheme = localStorage.getItem('geoPlannerTema');
             if (savedTheme) {
                 applyTheme(savedTheme);
             } else {
-                applyTheme('default');
+                applyTheme('default'); // Aplicar tema por defecto si no hay ninguno guardado
             }
 
+            // --- MAP STYLE FUNCTIONS ---
+            function changeMapStyle(styleName) {
+                if (!mapStyles[styleName]) return;
+                
+                currentMapStyle = styleName;
+                const style = mapStyles[styleName];
+                
+                // Update main map
+                if (mainMap && currentTileLayer) {
+                    mainMap.removeLayer(currentTileLayer);
+                }
+                currentTileLayer = L.tileLayer(style.url, {
+                    attribution: style.attribution
+                });
+                if (mainMap) {
+                    currentTileLayer.addTo(mainMap);
+                }
+                
+                // Update selection map if it exists
+                if (selectionMap) {
+                    selectionMap.eachLayer(layer => {
+                        if (layer instanceof L.TileLayer) {
+                            selectionMap.removeLayer(layer);
+                        }
+                    });
+                    L.tileLayer(style.url, {
+                        attribution: style.attribution
+                    }).addTo(selectionMap);
+                }
+                
+                // Update UI
+                document.querySelectorAll('.map-style-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.style === styleName) {
+                        item.classList.add('active');
+                    }
+                });
+                
+                // Save preference
+                localStorage.setItem('geoplanner_map_style', styleName);
+            }
+
+            // --- DATA INITIALIZATION & MANAGEMENT ---
             function initData() {
+                // Cargar y mostrar datos del usuario desde localStorage
                 const nombre = localStorage.getItem("geoPlannerNombre") || "Usuario";
                 const apellido = localStorage.getItem("geoPlannerApellido") || "";
                 const foto = localStorage.getItem("geoPlannerFotoPerfil");
                 const tema = localStorage.getItem("geoPlannerTema") || "default";
 
+                // Actualizar el objeto currentUser para la lógica interna (como USER_ID)
                 currentUser.nombre = `${nombre} ${apellido}`.trim();
                 currentUser.foto = foto;
 
+                // Actualizar nombre en el perfil y en el widget de creación
                 document.querySelector('.nombre-usuario').textContent = currentUser.nombre;
                 document.querySelector('.nombre-usuario-short').textContent = nombre.split(' ')[0];
 
+                // Actualizar foto de perfil en todos los elementos relevantes
                 if (foto) {
                     document.querySelectorAll(".foto-usuario").forEach(el => {
                         el.src = foto;
                     });
                 }
 
+                // Load saved map style
+                const savedMapStyle = localStorage.getItem('geoplanner_map_style') || 'openstreetmap';
+                currentMapStyle = savedMapStyle;
+
+                // Cargar publicaciones, agenda y eventos guardados
                 const examplePosts = [{
                     id: 'post_1',
                     author: 'ana_gomez',
@@ -488,9 +583,11 @@
                 agendaItems = JSON.parse(localStorage.getItem(STORAGE_KEY_AGENDA + USER_ID)) || [];
                 savedEvents = JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED + USER_ID)) || [];
 
+                // Aplicar el tema guardado
                 applyTheme(tema);
             }
 
+            // --- VIEW MANAGEMENT & RENDERING ---
             function toggleView() {
                 currentView = (currentView === 'map') ? 'classic' : 'map';
                 document.getElementById('view-toggle-btn').textContent = currentView === 'map' ? 'Ver Feed Clásico' : 'Ver Vista de Mapa';
@@ -570,7 +667,13 @@
                             zoomControl: false,
                             scrollWheelZoom: false
                         }).setView(latlngs[0], 13);
-                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(postMap);
+                        
+                        // Use current map style for post maps
+                        const style = mapStyles[currentMapStyle];
+                        L.tileLayer(style.url, {
+                            attribution: style.attribution
+                        }).addTo(postMap);
+                        
                         latlngs.forEach(latlng => L.marker(latlng).addTo(postMap));
                         if (latlngs.length > 1) {
                             const polyline = L.polyline(latlngs, {
@@ -602,7 +705,13 @@
                             zoomControl: false,
                             scrollWheelZoom: false
                         }).setView(latlngs[0], 13);
-                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(postMap);
+                        
+                        // Use current map style for saved post maps
+                        const style = mapStyles[currentMapStyle];
+                        L.tileLayer(style.url, {
+                            attribution: style.attribution
+                        }).addTo(postMap);
+                        
                         latlngs.forEach(latlng => L.marker(latlng).addTo(postMap));
                         if (latlngs.length > 1) {
                             const polyline = L.polyline(latlngs, {
@@ -624,6 +733,7 @@
                 renderMapMarkers(document.getElementById('map-filter-type').value);
             }
 
+            // --- INTERACTION LOGIC ---
             function toggleLike(postId) {
                 const post = allPosts.find(p => p.id === postId);
                 if (!post) return;
@@ -668,9 +778,15 @@
                 refreshUI();
             }
 
+            // --- MAPS & MODALS LOGIC ---
             function initMainMap() {
                 mainMap = L.map('feed-map').setView([10.654, -71.612], 12);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mainMap);
+                
+                // Apply saved map style
+                const style = mapStyles[currentMapStyle];
+                currentTileLayer = L.tileLayer(style.url, {
+                    attribution: style.attribution
+                }).addTo(mainMap);
             }
 
             function renderMapMarkers(filterType = 'all') {
@@ -821,15 +937,37 @@
                 });
                 document.getElementById('menu-guardados').addEventListener('click', renderSavedEvents);
 
+                // Map styles dropdown functionality
+                const mapStylesIcon = document.getElementById('map-styles-icon');
+                const mapStylesDropdown = document.getElementById('map-styles-dropdown');
+                
+                mapStylesIcon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isShown = mapStylesDropdown.classList.contains('show');
+                    closeAllDropdowns();
+                    if (!isShown) mapStylesDropdown.classList.add('show');
+                });
+
+                // Map style selection
+                document.querySelectorAll('.map-style-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const styleName = item.dataset.style;
+                        changeMapStyle(styleName);
+                        mapStylesDropdown.classList.remove('show');
+                    });
+                });
+
                 const dropdownIcons = {
-                    'requests-icon': 'requests-dropdown',
                     'notifications-icon': 'notifications-dropdown',
                     'profile-icon': 'profile-dropdown'
                 };
-                const closeAllDropdowns = () => Object.values(dropdownIcons).forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.classList.remove('show');
-                });
+                const closeAllDropdowns = () => {
+                    document.getElementById('map-styles-dropdown').classList.remove('show');
+                    Object.values(dropdownIcons).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.classList.remove('show');
+                    });
+                };
                 Object.keys(dropdownIcons).forEach(iconId => {
                     const icon = document.getElementById(iconId);
                     const dropdown = document.getElementById(dropdownIcons[iconId]);
@@ -920,30 +1058,17 @@
                     e.target.reset();
                 });
 
-                // --- FIX: Sequential Modal Handling Logic ---
-
-                // Button to open the map modal from the create post modal
-                document.getElementById('open-map-modal-btn').addEventListener('click', () => {
-                    // When the create modal is hidden, show the map modal.
-                    // { once: true } ensures this listener is removed after it runs once.
-                    createPostModalEl.addEventListener('hidden.bs.modal', () => {
-                        mapSelectModal.show();
-                    }, {
-                        once: true
-                    });
-                    createPostModal.hide();
-                });
-
-                // When the map modal is closed (for any reason), show the create modal again.
-                mapSelectModalEl.addEventListener('hidden.bs.modal', () => {
-                    createPostModal.show();
-                });
-
-                // Initialize map when modal is shown
+                const mapSelectModalEl = document.getElementById('map-select-modal');
                 mapSelectModalEl.addEventListener('shown.bs.modal', function() {
                     if (!selectionMap) {
                         selectionMap = L.map('modal-map-container').setView([10.654, -71.612], 13);
-                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(selectionMap);
+                        
+                        // Use current map style for selection map
+                        const style = mapStyles[currentMapStyle];
+                        L.tileLayer(style.url, {
+                            attribution: style.attribution
+                        }).addTo(selectionMap);
+                        
                         selectionMap.on('click', (e) => {
                             if (routeType === 'simple' && selectedMarkers.length > 0) clearSelectionMap();
                             const newMarker = L.marker(e.latlng).addTo(selectionMap);
@@ -958,7 +1083,6 @@
                     }
                     setTimeout(() => selectionMap.invalidateSize(), 10);
                 });
-
                 const clearSelectionMap = () => {
                     selectedMarkers.forEach(m => selectionMap.removeLayer(m));
                     selectedMarkers = [];
@@ -968,36 +1092,22 @@
                     }
                 };
                 document.getElementById('clear-map-button').addEventListener('click', clearSelectionMap);
-
-                const simpleRouteTab = document.getElementById('simple-route-tab');
-                const multipleRouteTab = document.getElementById('multiple-route-tab');
-                const routeInfoText = document.getElementById('route-info-text');
-                const locationModalTitle = document.querySelector('#map-select-modal .modal-title');
-
-                simpleRouteTab.addEventListener('click', () => {
+                document.getElementById('simple-route-tab').addEventListener('click', () => {
                     routeType = 'simple';
                     clearSelectionMap();
-                    simpleRouteTab.classList.add('active');
-                    multipleRouteTab.classList.remove('active');
-                    locationModalTitle.textContent = 'Define la ubicación: Ruta Simple';
-                    routeInfoText.innerHTML = '<strong>Ruta Simple:</strong> Haz clic en el mapa para colocar un único marcador para tu evento.';
                 });
-
-                multipleRouteTab.addEventListener('click', () => {
+                document.getElementById('multiple-route-tab').addEventListener('click', () => {
                     routeType = 'multiple';
                     clearSelectionMap();
-                    multipleRouteTab.classList.add('active');
-                    simpleRouteTab.classList.remove('active');
-                    locationModalTitle.textContent = 'Define la ubicación: Ruta Múltiple';
-                    routeInfoText.innerHTML = '<strong>Ruta Múltiple:</strong> Haz clic en el mapa para añadir varios puntos y trazar una ruta.';
                 });
-
                 document.getElementById('accept-location-button').addEventListener('click', () => {
                     if (selectedMarkers.length > 0) {
                         const latlngs = selectedMarkers.map(m => m.getLatLng());
                         document.getElementById('location-display').textContent = routeType === 'simple' ? `Ubicación: [${latlngs[0].lat.toFixed(4)}, ${latlngs[0].lng.toFixed(4)}]` : `Ruta Múltiple (${selectedMarkers.length} puntos)`;
+                        bootstrap.Modal.getInstance(mapSelectModalEl).hide();
+                    } else {
+                        alert("Por favor, selecciona al menos un punto.");
                     }
-                    mapSelectModal.hide();
                 });
 
                 const termsDefaultRadio = document.getElementById('terms-default-radio');
