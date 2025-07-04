@@ -9,8 +9,349 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="css/dashboard.css" />
+    <style>
+        :root {
+            --header-bg: linear-gradient(145deg, #007BFF, #003366);
+            --header-text-color: white;
+            --header-icon-bg: rgba(255, 255, 255, 0.15);
+            --header-icon-hover-bg: rgba(255, 255, 255, 0.25);
+            --body-bg: #f0f2f5;
+            --sidebar-bg: linear-gradient(145deg, #007BFF, #003366);
+            --sidebar-text-color: white;
+            --sidebar-hover-bg: rgba(255, 255, 255, 0.15);
+            --card-bg: #ffffff;
+            --card-text-color: #333;
+            --card-secondary-text-color: #6c757d;
+            --btn-primary-bg: #0d6efd;
+            --btn-primary-text: white;
+            --verified-badge-color: #ffd700;
+            --star-saved-color: #ffc107;
+            --star-default-color: #adb5bd;
+        }
+
+        body {
+            background-color: var(--body-bg);
+            font-family: 'Segoe UI', sans-serif;
+            overflow-x: hidden;
+        }
+
+        body.classic-view-active .new-post-button {
+            display: block;
+        }
+
+        body.classic-view-active .content-area {
+            display: flex;
+            justify-content: center;
+        }
+
+        header {
+            background: var(--header-bg);
+            color: var(--header-text-color);
+            padding: 0.75rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 1050;
+        }
+
+        .main-content {
+            display: flex;
+            height: calc(100vh - 65px);
+        }
+
+        .left-sidebar {
+            width: 250px;
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text-color);
+            padding: 1.5rem;
+            height: 100%;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .left-sidebar ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .left-sidebar li {
+            margin-bottom: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .left-sidebar li:hover {
+            background-color: var(--sidebar-hover-bg);
+        }
+
+        .content-area {
+            flex-grow: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        #map-view-container {
+            display: flex;
+            height: 100%;
+            gap: 1.5rem;
+        }
+
+        #feed-map {
+            flex-grow: 1;
+            border-radius: 10px;
+        }
+
+        #event-detail-sidebar {
+            width: 350px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            transform: translateX(110%);
+            transition: transform 0.4s ease;
+            position: absolute;
+            right: 1.5rem;
+            top: 0;
+            height: 100%;
+        }
+
+        #event-detail-sidebar.show {
+            transform: translateX(0);
+        }
+
+        #classic-feed-container {
+            display: none;
+            width: 100%;
+            justify-content: center;
+        }
+
+        #classic-feed-view {
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .post {
+            background-color: var(--card-bg);
+            color: var(--card-text-color);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .geoplanner-verified-icon {
+            width: 18px;
+            height: 18px;
+            color: var(--verified-badge-color);
+            vertical-align: middle;
+        }
+
+        .save-star-icon {
+            cursor: pointer;
+            margin-left: auto;
+            color: var(--star-default-color);
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .save-star-icon.saved {
+            color: var(--star-saved-color);
+            transform: scale(1.2);
+        }
+
+        .post img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+        }
+
+        .map-container {
+            height: 250px;
+            border-radius: 10px;
+            margin-top: 0.5rem;
+        }
+
+        .create-post-widget {
+            background-color: var(--card-bg);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .create-post-widget-input {
+            flex-grow: 1;
+            background-color: var(--body-bg);
+            border: none;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .create-post-widget-input:hover {
+            background-color: #e4e6eb;
+        }
+
+        .new-post-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--btn-primary-bg);
+            color: white;
+            font-size: 2rem;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1040;
+            display: none;
+        }
+
+        #location-display {
+            border: 1px dashed #ccc;
+            padding: 0.5rem;
+            border-radius: 8px;
+            min-height: 40px;
+            background-color: #f8f9fa;
+        }
+
+        #modal-map-container {
+            height: 50vh;
+            border-radius: 10px;
+        }
+
+        .icon-bar {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 55px;
+            background-color: var(--card-bg);
+            color: var(--card-text-color);
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+            width: 360px;
+            z-index: 2000;
+            border: 1px solid #ddd;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-header {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .dropdown-item-custom {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+            color: var(--card-text-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .dropdown-item-custom:hover {
+            background-color: var(--body-bg);
+        }
+
+        .dropdown-item-custom img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .icon-button {
+            background-color: var(--header-icon-bg);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            color: var(--header-text-color);
+        }
+
+        .icon-button:hover {
+            background-color: var(--header-icon-hover-bg);
+        }
+
+        .map-filters {
+            position: absolute;
+            top: 10px;
+            left: 50px;
+            z-index: 401;
+            background: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .map-style-preview {
+            width: 60px;
+            height: 40px;
+            border-radius: 4px;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid transparent;
+        }
+
+        .map-style-preview.active {
+            border-color: var(--btn-primary-bg);
+        }
+
+        .map-style-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .map-style-item:hover {
+            background-color: var(--body-bg);
+        }
+
+        .map-style-item.active {
+            background-color: var(--body-bg);
+        }
+    </style>
 </head>
+
+<body>
 
     <header class="d-flex justify-content-between align-items-center">
         <a href="dashboard.html" class="d-flex align-items-center gap-2 text-white text-decoration-none">
@@ -48,14 +389,14 @@
                             <strong>Terreno</strong>
                             <br><small>Relieve y topografía</small>
                         </div>
-                    </div> -->
+                    </div> 
                     <div class="map-style-item" data-style="dark">
                         <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjMkYyRjJGIi8+CjxwYXRoIGQ9Ik0xMCAzMEwyMCAyMEwzMCAzMEw0MCAyMEw1MCAzMCIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+')"></div>
                         <div>
                             <strong>Modo Oscuro</strong>
                             <br><small>Tema oscuro para la noche</small>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <span class="icon-button" id="notifications-icon" title="Notificaciones">🔔</span>
@@ -86,105 +427,36 @@
                         <div><strong>Cerrar sesión</strong></div>
                     </a>
                 </div>
-
             </div>
-          </div>
-        </a>
-      </div>
+        </div>
+    </header>
 
-      <span class="icon-button" id="notifications-icon" title="Notificaciones">🔔</span>
-      <div class="dropdown-content" id="notifications-dropdown">
-        <div class="dropdown-header">Notificaciones</div>
-        <a href="#" class="dropdown-item-custom">
-          <img src="img/estudio.jpg" alt="event" />
-          <div>
-            <strong>@carlos_martinez</strong> comentó en tu publicación:
-            "¡Allí estaré!".
-          </div>
-        </a>
-        <hr class="my-2">
-        <a href="#" class="dropdown-item-custom">
-          <img src="img/LogoMini.png" alt="system" />
-          <div>
-            A <strong>3 personas</strong> más les gustó tu evento "Picnic con
-            amigos".
-          </div>
-        </a>
-        <hr class="my-2">
-        <a href="#" class="dropdown-item-custom">
-          <img src="img/placeholder.png" alt="group" />
-          <div>
-            Se ha creado un nuevo evento en el grupo "Amantes del Senderismo".
-          </div>
-        </a>
-      </div>
+    <div class="main-content">
+        <aside class="left-sidebar">
+            <ul>
+                <li id="menu-agenda">📅 Mi Agenda</li>
+                <li id="menu-inscripciones">🎟️ Mis Inscripciones</li>
+                <li id="menu-guardados">⭐ Eventos Guardados</li>
+                <li>👨‍👩‍👧‍👦 Grupos</li>
+            </ul>
+        </aside>
 
-      <span class="icon-button" id="profile-icon" title="Perfil">👤</span>
-      <div class="dropdown-content" id="profile-dropdown">
-        <a href="perfil.html" class="dropdown-item-custom">
-          <img class="foto-usuario" src="" alt="profile" />
-          <div>
-            <span class="nombre-usuario"></span>
-            <br>
-            <small>Ver tu perfil</small>
-          </div>
-        </a>
-        <hr class="my-2">
-        <a href="#" class="dropdown-item-custom">
-          <span>⚙️</span>
-          <div><strong>Configuración</strong></div>
-        </a>
-        <a href="index.html" class="dropdown-item-custom" id="logout-button">
-          <span>➡️</span>
-          <div><strong>Cerrar sesión</strong></div>
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <div class="container-xl">
-    <div class="main-container row">
-      <aside class="left-sidebar col-lg-3 d-none d-lg-block">
-        <ul>
-          <li>🏠 Inicio</li>
-          <li>🧑‍🤝‍🧑 Mis Amigos</li>
-          <li>👨‍👩‍👧‍👦 Grupos</li>
-          <li>📅 Mis Eventos</li>
-        </ul>
-      </aside>
-
-      <div class="col-lg-6 col-md-12">
-        <div class="new-post">
-          <h6><strong>Crear nueva publicación</strong></h6>
-          <textarea id="post-text" class="form-control mb-2" rows="2"
-            placeholder="¿Qué estás organizando?..."></textarea>
-          <label for="file-media" class="form-label">Subir fotos o videos (opcional)</label>
-          <input type="file" id="file-media" class="form-control mb-2" accept="image/*,video/*">
-
-          <button class="btn btn-outline-primary w-100 mb-2" type="button" data-bs-toggle="modal"
-            data-bs-target="#map-modal">
-            📍 Seleccionar Ubicación (Obligatorio)
-          </button>
-          <div id="location-display" class="mb-2">
-            No se ha seleccionado ninguna ubicación.
-          </div>
-
-          <div id="post-map-preview-container"></div>
-          <select class="form-select mb-2" id="privacidad">
-            <option value="publica">Pública</option>
-            <option value="amigos">Solo amigos</option>
-            <option value="privada">Privada con invitación</option>
-          </select>
-
-          <div class="mb-3">
-            <label for="custom-terms" class="form-label">Términos y Condiciones Personalizados</label>
-            <textarea id="custom-terms" class="form-control" rows="3"
-              placeholder="Escribe términos personalizados aquí..."></textarea>
-            <div class="form-check mt-2">
-              <input class="form-check-input" type="checkbox" id="terms-weapons">
-              <label class="form-check-label" for="terms-weapons">Prohibición de armas</label>
+        <div class="content-area">
+            <div id="map-view-container">
+                <div id="feed-map">
+                    <div class="map-filters">
+                        <select id="map-filter-type" class="form-select form-select-sm">
+                            <option value="all">Todos los tipos</option>
+                            <option value="Deporte">Deporte</option>
+                            <option value="Estudio">Estudio</option>
+                            <option value="Social">Social</option>
+                            <option value="Cultural">Cultural</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="event-detail-sidebar"></div>
             </div>
-
             <div id="classic-feed-container">
                 <div id="classic-feed-view">
                     <div class="create-post-widget">
@@ -197,15 +469,9 @@
                     </div>
                     <div id="classic-feed-content"></div>
                 </div>
-
             </div>
-          </div>
-          <button id="publish-button" class="btn btn-primary w-100" disabled>
-            Publicar
-          </button>
         </div>
     </div>
-
 
     <button class="new-post-button" data-bs-toggle="modal" data-bs-target="#create-post-modal">+</button>
 
@@ -321,351 +587,49 @@
                     <button type="button" class="btn btn-warning" id="clear-map-button">Limpiar Mapa</button>
                     <button type="button" class="btn btn-primary" id="accept-location-button">Aceptar</button>
                 </div>
-
             </div>
-          </div>
         </div>
-      </aside>
     </div>
-  </div>
 
-  <div class="modal fade" id="map-modal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="mapModalLabel">
-            Define la ubicación de tu evento
-          </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <ul class="nav nav-tabs" id="route-type-tabs" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="simple-route-tab" data-bs-toggle="tab" data-bs-target="#map-panel"
-                type="button" role="tab">
-                📍 Ruta Simple
-              </button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" id="multiple-route-tab" data-bs-toggle="tab" data-bs-target="#map-panel"
-                type="button" role="tab">
-                ➯ Ruta Múltiple
-              </button>
-            </li>
-          </ul>
-
-          <p class="form-text mt-2">
-            <strong>Ruta Simple:</strong> Haz clic en el mapa para colocar un
-            único marcador.<br />
-            <strong>Ruta Múltiple:</strong> Haz clic en varios puntos para
-            trazar una ruta.
-          </p>
-          <div id="modal-map-container" style="height: 400px"></div>
-          <div id="ruta-inputs" class="mt-3"></div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-warning" id="clear-map-button">
-            Limpiar Mapa
-          </button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Cancelar
-          </button>
-          <button type="button" class="btn btn-primary" id="accept-location-button">
-            Aceptar
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const STORAGE_KEY = "geoplanner_posts";
-      const USER_ID = "juan_sarcos";
-
-      const dropdownIcons = {
-        "requests-icon": "requests-dropdown",
-        "notifications-icon": "notifications-dropdown",
-        "profile-icon": "profile-dropdown",
-      };
-      const closeAllDropdowns = () => {
-        Object.values(dropdownIcons).forEach((dropdownId) => {
-          const dropdown = document.getElementById(dropdownId);
-          if (dropdown) dropdown.classList.remove("show");
-        });
-      };
-      Object.keys(dropdownIcons).forEach((iconId) => {
-        const icon = document.getElementById(iconId);
-        const dropdown = document.getElementById(dropdownIcons[iconId]);
-        if (icon && dropdown) {
-          icon.addEventListener("click", function (event) {
-            event.stopPropagation();
-            const isCurrentlyShown = dropdown.classList.contains("show");
-            closeAllDropdowns();
-            if (!isCurrentlyShown) {
-              dropdown.classList.add("show");
-            }
-          });
-        }
-      });
-      window.addEventListener("click", () => closeAllDropdowns());
-      const logoutButton = document.getElementById("logout-button");
-      if (logoutButton) {
-        logoutButton.addEventListener("click", () =>
-          alert("Cerrando sesión...")
-        );
-      }
-
-      const mapModalEl = document.getElementById("map-modal");
-      const acceptLocationButton = document.getElementById(
-        "accept-location-button"
-      );
-      const clearMapButton = document.getElementById("clear-map-button");
-      const publishButton = document.getElementById("publish-button");
-      const locationDisplay = document.getElementById("location-display");
-      const postMapPreviewContainer = document.getElementById(
-        "post-map-preview-container"
-      );
-
-      let modalMap, postPreviewMap;
-      let routeType = "simple";
-      let markers = [];
-      let polyline = null;
-
-      const geoPlannerIcon = L.icon({
-        iconUrl: "img/LogoMini.png",
-        iconSize: [40, 40],
-        iconAnchor: [20, 40],
-      });
-
-      mapModalEl.addEventListener("shown.bs.modal", function () {
-        if (!modalMap) {
-          modalMap = L.map("modal-map-container").setView(
-            [10.654, -71.612],
-            13
-          );
-          L.tileLayer(
-            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          ).addTo(modalMap);
-          modalMap.on("click", onMapClick);
-        }
-        setTimeout(() => modalMap.invalidateSize(), 10);
-      });
-
-      document
-        .getElementById("simple-route-tab")
-        .addEventListener("click", () => {
-          routeType = "simple";
-          clearMap();
-        });
-      document
-        .getElementById("multiple-route-tab")
-        .addEventListener("click", () => {
-          routeType = "multiple";
-          clearMap();
-        });
-
-      const onMapClick = (e) => {
-        if (routeType === "simple" && markers.length > 0) clearMap();
-
-        const newMarker = L.marker(e.latlng, { icon: geoPlannerIcon }).addTo(
-          modalMap
-        );
-        markers.push(newMarker);
-
-        if (routeType === "multiple") {
-          if (markers.length > 1) {
-            if (polyline) modalMap.removeLayer(polyline);
-            const latlngs = markers.map((m) => m.getLatLng());
-            polyline = L.polyline(latlngs, { color: "#007BFF" }).addTo(
-              modalMap
-            );
-          }
-
-          const rutaInputsContainer = document.getElementById("ruta-inputs");
-          const index = markers.length;
-          const inputGroup = document.createElement("div");
-          inputGroup.className = "input-group input-group-sm mb-2";
-          inputGroup.innerHTML = `
-                <span class="input-group-text">${index}</span>
-                <input type="text" placeholder="Descripción para el punto ${index}" class="form-control" data-index="${index - 1
-            }">
-            `;
-          rutaInputsContainer.appendChild(inputGroup);
-        }
-      };
-
-      const clearMap = () => {
-        markers.forEach((m) => modalMap.removeLayer(m));
-        markers = [];
-        if (polyline) {
-          modalMap.removeLayer(polyline);
-          polyline = null;
-        }
-        document.getElementById("ruta-inputs").innerHTML = "";
-      };
-
-      clearMapButton.addEventListener("click", clearMap);
-
-      acceptLocationButton.addEventListener("click", function () {
-        if (markers.length === 0) {
-          alert("Por favor, selecciona al menos un punto en el mapa.");
-          return;
-        }
-
-        const latlngs = markers.map((m) => m.getLatLng());
-        locationDisplay.textContent =
-          routeType === "simple"
-            ? `Ubicación: [${latlngs[0].lat.toFixed(
-              4
-            )}, ${latlngs[0].lng.toFixed(4)}]`
-            : `Ruta Múltiple (${markers.length} puntos)`;
-
-        postMapPreviewContainer.style.height = "200px";
-        if (!postPreviewMap) {
-          postPreviewMap = L.map("post-map-preview-container", {
-            zoomControl: false,
-            scrollWheelZoom: false,
-            dragging: false,
-          });
-          L.tileLayer(
-            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          ).addTo(postPreviewMap);
-        } else {
-          postPreviewMap.eachLayer((layer) => {
-            if (layer instanceof L.Marker || layer instanceof L.Polyline)
-              postPreviewMap.removeLayer(layer);
-          });
-        }
-
-        latlngs.forEach((latlng) =>
-          L.marker(latlng, { icon: geoPlannerIcon }).addTo(postPreviewMap)
-        );
-        if (routeType === "multiple" && latlngs.length > 1) {
-          L.polyline(latlngs, { color: "#007BFF" }).addTo(postPreviewMap);
-        }
-
-        const bounds = L.latLngBounds(latlngs);
-        postPreviewMap.fitBounds(bounds, { padding: [40, 40] });
-
-        publishButton.disabled = false;
-        bootstrap.Modal.getInstance(mapModalEl).hide();
-      });
-
-      function initExamplePosts() {
-        if (localStorage.getItem(STORAGE_KEY)) return;
-        const examples = [
-          {
-            id: "post_carlos",
-            autor: "carlos_martinez",
-            username: "carlos_martinez",
-            texto:
-              "Nos vemos en el parque central para una sesión de estudio.",
-            privacidad: "publica",
-            mediaURL: "img/estudio.jpg",
-            ubicacion: "10.659,-71.611",
-            rutas: [
-              { coords: "10.659,-71.611", label: "Punto de encuentro" },
-            ],
-            timestamp: new Date().toISOString(),
-            likes: 2,
-            likers: ["ana_g", "luis_p"],
-            comentarios: [{ autor: "ana_g", texto: "¡Allí estaré!" }],
-            terms: {
-              custom: "Ser puntuales.",
-              predefined: ["Prohibición de armas"],
-            },
-          },
-          {
-            id: "post_valentina",
-            autor: "valentina_g",
-            username: "valentina_g",
-            texto: "Picnic con amigos en el Jardín Botánico este domingo.",
-            privacidad: "amigos",
-            mediaURL: "",
-            ubicacion: "10.661,-71.618",
-            rutas: [{ coords: "10.661,-71.618", label: "Lugar del picnic" }],
-            timestamp: new Date().toISOString(),
-            likes: 1,
-            likers: [USER_ID],
-            comentarios: [
-              { autor: "valentina_g", texto: "Invitados confirmados 😊" },
-            ],
-            terms: { custom: null, predefined: [] },
-          },
-        ];
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(examples));
-      }
-
-      function loadPosts() {
-        const posts = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-        const feed = document.querySelector(".feed");
-
-        feed.innerHTML = "";
-        posts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-        posts.forEach((post) => feed.appendChild(renderPost(post)));
-      }
-
-      function renderPost(post) {
-        const container = document.createElement("div");
-        container.classList.add("post");
-        const privacyBadge =
-          {
-            publica: "🔓 Pública",
-            amigos: "👥 Amigos",
-            privada: "🔒 Privada",
-          }[post.privacidad] || "🔓 Pública";
-
-        // Lógica de renderizado principal
-        container.innerHTML = `
-            <h6>
-                <strong>${post.autor}</strong>
-                <small style="color: gray; font-size: 0.85em;">@${post.username || post.autor
-          }</small>
-                <span class="badge bg-secondary">${privacyBadge}</span>
-            </h6>
-            <p>${post.texto}</p>
-            ${post.mediaURL
-            ? `<img src="${post.mediaURL}" alt="Media" class="img-fluid rounded mb-2">`
-            : ""
-          }
-            <div class="map-container mb-2" id="map-${post.id}"></div>
-            ${post.rutas.length > 1
-            ? `<ol id="ruta-list-${post.id}" class="list-group list-group-flush list-group-numbered mb-2 small"></ol>`
-            : post.rutas.length === 1 && post.rutas[0].label
-              ? `<small class="d-block mb-2 text-muted">📍 ${post.rutas[0].label}</small>`
-              : ""
-          }
-            <div class="d-flex gap-2 mt-2">
-                <button class="btn btn-sm btn-outline-danger" id="btn-like-${post.id
-          }">
-                    ${post.likers.includes(USER_ID)
-            ? "💔 Quitar Like"
-            : "❤️ Like"
-          } (<span id="likes-${post.id}">${post.likes}</span>)
-                </button>
-                <button class="btn btn-sm btn-outline-secondary" id="btn-comment-toggle-${post.id
-          }">💬 Comentarios (${post.comentarios.length})</button>
-                <button class="btn btn-sm btn-outline-info" id="btn-terms-${post.id
-          }">📜 Ver Términos</button>
-            </div>
-            <div class="comentarios mt-2 collapse" id="comentarios-${post.id}">
-                <div class="comentarios-list mb-2">
-                    ${post.comentarios
-            .map(
-              (c) =>
-                `<div class="small"><strong>@${c.autor}:</strong> ${c.texto}</div>`
-            )
-            .join("")}
+    <!-- Modal: Agenda -->
+    <div class="modal fade" id="agenda-modal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mi Agenda Privada</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="input-group mt-2">
-                    <input type="text" class="form-control form-control-sm" id="input-${post.id
-          }" placeholder="Escribe un comentario...">
-                    <button class="btn btn-sm btn-primary" id="btn-comment-${post.id
-          }">Enviar</button>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h6>Nueva Actividad</h6>
+                            <form id="agenda-form">
+                                <div class="mb-2"><input type="text" id="agenda-title" class="form-control" placeholder="Título de la actividad" required></div>
+                                <div class="mb-2"><textarea id="agenda-desc" class="form-control" rows="3" placeholder="Descripción..."></textarea></div>
+                                <div class="mb-2"><input type="datetime-local" id="agenda-date" class="form-control" required></div>
+                                <button type="submit" class="btn btn-primary w-100">Guardar Actividad</button>
+                            </form>
+                        </div>
+                        <div class="col-md-8">
+                            <h6>Mis Actividades</h6>
+                            <div id="agenda-list" class="list-group"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
 
+    <!-- Modal: Eventos Guardados -->
+    <div class="modal fade" id="saved-events-modal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mis Eventos Guardados</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="saved-events-list"></div>
+            </div>
         </div>
     </div>
 
@@ -704,11 +668,6 @@
                     name: 'Vista Satelital',
                     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                     attribution: '© Esri'
-                },
-                dark: {
-                    name: 'Modo Oscuro',
-                    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-                    attribution: '© CartoDB'
                 }
             };
 
@@ -1550,16 +1509,8 @@
             }
 
             initialize();
-
         });
-      }
-
-      // Aplicar tema visual
-      if (tema !== "default") {
-        document.body.classList.add(`tema-${tema}`);
-      }
-    });
-  </script>
+    </script>
 </body>
 
 </html>
