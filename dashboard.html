@@ -348,6 +348,85 @@
         .map-style-item.active {
             background-color: var(--body-bg);
         }
+
+        /* Estilos para el selector de temas */
+        .theme-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .theme-item:hover {
+            background-color: var(--body-bg);
+        }
+
+        .theme-item.active {
+            background-color: var(--body-bg);
+        }
+
+        .theme-preview {
+            width: 40px;
+            height: 25px;
+            border-radius: 4px;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-preview.active {
+            border-color: var(--btn-primary-bg);
+        }
+
+        .theme-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 2px;
+        }
+
+        /* Previews específicos para cada tema */
+        .theme-preview[data-theme="default"]::before {
+            background: linear-gradient(145deg, #007BFF, #003366);
+        }
+
+        .theme-preview[data-theme="aurora"]::before {
+            background: linear-gradient(145deg, #F8CDDA, #1D2B64);
+        }
+
+        .theme-preview[data-theme="noche"]::before {
+            background: linear-gradient(145deg, #141E30, #243B55);
+        }
+
+        .theme-preview[data-theme="oceano"]::before {
+            background: linear-gradient(145deg, #2C3E50, #4CA1AF);
+        }
+
+        .theme-preview[data-theme="amanecer"]::before {
+            background: linear-gradient(145deg, #FF512F, #F09819);
+        }
+
+        .theme-preview[data-theme="pastel"]::before {
+            background: linear-gradient(145deg, #A1C4FD, #C2E9FB);
+        }
+
+        .theme-preview[data-theme="fuego"]::before {
+            background: linear-gradient(145deg, #CB356B, #BD3F32);
+        }
+
+        .theme-preview[data-theme="bosque"]::before {
+            background: linear-gradient(145deg, #11998E, #38EF7D);
+        }
+
+        .theme-preview[data-theme="lluvia"]::before {
+            background: linear-gradient(145deg, #396afc, #2948ff);
+        }
     </style>
 </head>
 
@@ -364,6 +443,75 @@
         <div class="d-flex align-items-center gap-3">
             <button id="view-toggle-btn" class="btn btn-outline-light btn-sm">Ver Feed Clásico</button>
             <div class="icon-bar d-flex gap-2">
+                <!-- Botón selector de temas -->
+                <span class="icon-button" id="theme-selector-icon" title="Cambiar Tema">🎨</span>
+                <div class="dropdown-content" id="theme-selector-dropdown">
+                    <div class="dropdown-header">Seleccionar Tema</div>
+                    <div class="theme-item active" data-theme="default">
+                        <div class="theme-preview" data-theme="default"></div>
+                        <div>
+                            <strong>Predeterminado</strong>
+                            <br><small>Azul clásico</small>
+                        </div>
+                    </div>
+                    <div class="theme-item" data-theme="aurora">
+                        <div class="theme-preview" data-theme="aurora"></div>
+                        <div>
+                            <strong>Aurora</strong>
+                            <br><small>Rosa y azul</small>
+                        </div>
+                    </div>
+                    <div class="theme-item" data-theme="noche">
+                        <div class="theme-preview" data-theme="noche"></div>
+                        <div>
+                            <strong>Noche</strong>
+                            <br><small>Modo oscuro</small>
+                        </div>
+                    </div>
+                    <div class="theme-item" data-theme="oceano">
+                        <div class="theme-preview" data-theme="oceano"></div>
+                        <div>
+                            <strong>Océano</strong>
+                            <br><small>Azul marino</small>
+                        </div>
+                    </div>
+                    <div class="theme-item" data-theme="amanecer">
+                        <div class="theme-preview" data-theme="amanecer"></div>
+                        <div>
+                            <strong>Amanecer</strong>
+                            <br><small>Naranja y rojo</small>
+                        </div>
+                    </div>
+                    <div class="theme-item" data-theme="pastel">
+                        <div class="theme-preview" data-theme="pastel"></div>
+                        <div>
+                            <strong>Pastel</strong>
+                            <br><small>Azul suave</small>
+                        </div>
+                    </div>
+                    <div class="theme-item" data-theme="fuego">
+                        <div class="theme-preview" data-theme="fuego"></div>
+                        <div>
+                            <strong>Fuego</strong>
+                            <br><small>Rojo intenso</small>
+                        </div>
+                    </div>
+                    <div class="theme-item" data-theme="bosque">
+                        <div class="theme-preview" data-theme="bosque"></div>
+                        <div>
+                            <strong>Bosque</strong>
+                            <br><small>Verde natural</small>
+                        </div>
+                    </div>
+                    <div class="theme-item" data-theme="lluvia">
+                        <div class="theme-preview" data-theme="lluvia"></div>
+                        <div>
+                            <strong>Lluvia</strong>
+                            <br><small>Azul eléctrico</small>
+                        </div>
+                    </div>
+                </div>
+
                 <span class="icon-button" id="map-styles-icon" title="Estilos de Mapa">🗺️</span>
 
                 <div class="dropdown-content" id="map-styles-dropdown">
@@ -382,21 +530,6 @@
                             <br><small>Imágenes satelitales</small>
                         </div>
                     </div>
-                    <!--
-                    <div class="map-style-item" data-style="terrain">
-                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjVGNUY1Ii8+Cjxwb2x5Z29uIHBvaW50cz0iMTAsNDAgMjAsMTUgMzAsMjUgNDAsNSA1MCwyMCA2MCw0MCIgZmlsbD0iIzk4NzY1NCIvPgo8L3N2Zz4=')"></div>
-                        <div>
-                            <strong>Terreno</strong>
-                            <br><small>Relieve y topografía</small>
-                        </div>
-                    </div> 
-                    <div class="map-style-item" data-style="dark">
-                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjMkYyRjJGIi8+CjxwYXRoIGQ9Ik0xMCAzMEwyMCAyMEwzMCAzMEw0MCAyMEw1MCAzMCIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+')"></div>
-                        <div>
-                            <strong>Modo Oscuro</strong>
-                            <br><small>Tema oscuro para la noche</small>
-                        </div>
-                    </div> -->
                 </div>
 
                 <span class="icon-button" id="notifications-icon" title="Notificaciones">🔔</span>
@@ -765,14 +898,14 @@
                 }
             };
 
-            // 2. Función para aplicar el tema
+            // Función para aplicar el tema
             function applyTheme(themeName) {
                 const root = document.documentElement;
-                const theme = temas[themeName] || temas.noche; // Usar 'noche' como predeterminado si no se encuentra
+                const theme = temas[themeName] || temas.default;
 
                 root.style.setProperty('--header-bg', theme.headerBG);
                 root.style.setProperty('--header-text-color', theme.headerText);
-                root.style.setProperty('--header-icon-bg', theme.headerIconBG);
+                root.style.setProperty('--header-icon-bg', `rgba(255, 255, 255, 0.15)`);
                 root.style.setProperty('--header-icon-hover-bg', `rgba(255, 255, 255, 0.25)`);
 
                 root.style.setProperty('--body-bg', theme.bodyBG);
@@ -785,15 +918,18 @@
                 root.style.setProperty('--card-text-color', theme.cardText);
                 
                 root.style.setProperty('--btn-primary-bg', theme.btnPrimaryBG);
-                root.style.setProperty('--btn-primary-text', theme.headerText); // A menudo el texto del botón coincide con el del header
-            }
+                root.style.setProperty('--btn-primary-text', theme.headerText);
 
-            // 3. Obtener tema guardado y aplicarlo
-            const savedTheme = localStorage.getItem('geoPlannerTema');
-            if (savedTheme) {
-                applyTheme(savedTheme);
-            } else {
-                applyTheme('default'); // Aplicar tema por defecto si no hay ninguno guardado
+                // Actualizar la UI del selector de temas
+                document.querySelectorAll('.theme-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.theme === themeName) {
+                        item.classList.add('active');
+                    }
+                });
+
+                // Guardar el tema seleccionado
+                localStorage.setItem('geoPlannerTema', themeName);
             }
 
             // --- MAP STYLE FUNCTIONS ---
@@ -1257,7 +1393,6 @@
                 }
             }
 
-
             // --- EVENT LISTENERS SETUP ---
             function setupEventListeners() {
                 document.getElementById('view-toggle-btn').addEventListener('click', toggleView);
@@ -1270,6 +1405,26 @@
                     agendaModal.show();
                 });
                 document.getElementById('menu-guardados').addEventListener('click', renderSavedEvents);
+
+                // Theme selector functionality
+                const themeSelectorIcon = document.getElementById('theme-selector-icon');
+                const themeSelectorDropdown = document.getElementById('theme-selector-dropdown');
+                
+                themeSelectorIcon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isShown = themeSelectorDropdown.classList.contains('show');
+                    closeAllDropdowns();
+                    if (!isShown) themeSelectorDropdown.classList.add('show');
+                });
+
+                // Theme selection
+                document.querySelectorAll('.theme-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const themeName = item.dataset.theme;
+                        applyTheme(themeName);
+                        themeSelectorDropdown.classList.remove('show');
+                    });
+                });
 
                 // Map styles dropdown functionality
                 const mapStylesIcon = document.getElementById('map-styles-icon');
@@ -1296,6 +1451,7 @@
                     'profile-icon': 'profile-dropdown'
                 };
                 const closeAllDropdowns = () => {
+                    document.getElementById('theme-selector-dropdown').classList.remove('show');
                     document.getElementById('map-styles-dropdown').classList.remove('show');
                     Object.values(dropdownIcons).forEach(id => {
                         const el = document.getElementById(id);
