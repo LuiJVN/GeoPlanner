@@ -530,6 +530,13 @@
                             <br><small>Imágenes satelitales</small>
                         </div>
                     </div>
+                    <div class="map-style-item" data-style="hybrid_esri">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjNEE5MDQyIi8+CjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjE1IiBmaWxsPSIjNjhCMDVGIi8+CjxyZWN0IHg9IjM1IiB5PSIxNSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjOEFEMDgxIi8+CjxyZWN0IHg9IjAiIHk9IjIwIiB3aWR0aD0iNjAiIGhlaWdodD0iMjAiIGZpbGw9InVybCgjY2hlY2tlcmJvYXJkKSIvPgo8cGF0aCBkPSJNMTAgMjVMMjAgMTVMMzAgMjVMMTggMzlIMTJDMTQgMzcgMTYgMzMgMTggMjUiIHN0cm9rZT0iIzc2Njc2NyIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KPC9zdmc+')"></div>
+                        <div>
+                            <strong>Satélite con Calles</strong>
+                            <br><small>Imágenes + calles (Esri)</small>
+                        </div>
+                    </div>
                 </div>
 
                 <span class="icon-button" id="notifications-icon" title="Notificaciones">🔔</span>
@@ -801,6 +808,12 @@
                     name: 'Vista Satelital',
                     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                     attribution: '© Esri'
+                },
+                hybrid_esri: { // ¡Nueva entrada para el mapa híbrido!
+                    name: 'Satélite con Calles (Esri)',
+                    // URL de la capa satelital base de Esri
+                    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                    attribution: '© Esri',
                 }
             };
 
@@ -932,6 +945,7 @@
                 localStorage.setItem('geoPlannerTema', themeName);
             }
 
+            /*
             // --- MAP STYLE FUNCTIONS ---
             function changeMapStyle(styleName) {
                 if (!mapStyles[styleName]) return;
@@ -972,7 +986,70 @@
                 
                 // Save preference
                 localStorage.setItem('geoplanner_map_style', styleName);
+            }*/
+
+            let currentOverlayLayer = null; // Variable para la capa de superposición de calles
+
+            function changeMapStyle(styleName) {
+                if (!mapStyles[styleName]) return;
+                currentMapStyle = styleName;
+                const style = mapStyles[styleName];
+
+                // Limpiar capas existentes
+                if (mainMap && currentTileLayer) {
+                    mainMap.removeLayer(currentTileLayer);
+                }
+                if (mainMap && currentOverlayLayer) {
+                    mainMap.removeLayer(currentOverlayLayer);
+                    currentOverlayLayer = null;
+                }
+                if (selectionMap) {
+                    selectionMap.eachLayer(layer => {
+                        if (layer instanceof L.TileLayer) {
+                            selectionMap.removeLayer(layer);
+                        }
+                    });
+                }
+
+                // Añadir la capa base
+                currentTileLayer = L.tileLayer(style.url, { attribution: style.attribution });
+                if (mainMap) {
+                    currentTileLayer.addTo(mainMap);
+                }
+                if (selectionMap) {
+                    L.tileLayer(style.url, { attribution: style.attribution }).addTo(selectionMap);
+                }
+
+                // Si el estilo es 'hybrid_esri', añade la capa de calles como superposición
+                if (styleName === 'hybrid_esri') {
+                    currentOverlayLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+                        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, TomTom, OpenStreetMap contributors',
+                        pane: 'overlayPane' // Asegura que la capa de superposición esté por encima
+                    });
+                    if (mainMap) {
+                        currentOverlayLayer.addTo(mainMap);
+                        currentOverlayLayer.setZIndex(10); // Un z-index más alto para que esté encima
+                    }
+                    if (selectionMap) {
+                        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+                            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, TomTom, OpenStreetMap contributors',
+                            pane: 'overlayPane'
+                        }).addTo(selectionMap).setZIndex(10);
+                    }
+                }
+
+                // Actualizar UI
+                document.querySelectorAll('.map-style-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.style === styleName) {
+                        item.classList.add('active');
+                    }
+                });
+
+                // Guardar preferencia
+                localStorage.setItem('geoplanner_map_style', styleName);
             }
+
 
             // --- DATA INITIALIZATION & MANAGEMENT ---
             function initData() {
