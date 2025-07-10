@@ -598,6 +598,7 @@
             let allPosts = [];
             let agendaItems = [];
             let savedEvents = [];
+            let userRegistrations = [];
 
             const createPostModal = new bootstrap.Modal(document.getElementById('create-post-modal'));
             const agendaModal = new bootstrap.Modal(document.getElementById('agenda-modal'));
@@ -802,6 +803,7 @@
                 allPosts = JSON.parse(localStorage.getItem(STORAGE_KEY_POSTS));
                 agendaItems = JSON.parse(localStorage.getItem(STORAGE_KEY_AGENDA + USER_ID)) || [];
                 savedEvents = JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED + USER_ID)) || [];
+                userRegistrations = JSON.parse(localStorage.getItem('geoplanner_registrations_' + USER_ID)) || [];
 
                 // Aplicar el tema guardado
                 applyTheme(tema);
@@ -829,6 +831,8 @@
             }
 
             function renderPost(post) {
+                // Asegurar que el array de inscritos existe
+                if (!post.inscritos) post.inscritos = [];
                 const container = document.createElement('div');
                 container.className = 'post';
 
@@ -841,6 +845,20 @@
                 const isSaved = savedEvents.includes(post.id);
                 const verifiedIcon = `<svg class="geoplanner-verified-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm5.71,7.29-6,6a1,1,0,0,1-1.42,0l-3-3a1,1,0,0,1,1.42-1.42L11,13.59l5.29-5.3a1,1,0,0,1,1.42,1.42Z"/></svg>`;
                 const saveStarIcon = `<svg class="save-star-icon ${isSaved ? 'saved' : ''}" data-post-id="${post.id}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
+
+                const isOwner = post.author === USER_ID;
+                const now = new Date();
+                const eventDate = new Date(post.eventDate);
+                let actionButton = '';
+                if (isOwner) {
+                    if (eventDate > now) {
+                        actionButton = `<button class="btn btn-sm btn-warning btn-ver-inscritos" data-post-id="${post.id}">Ver Inscritos</button>`;
+                    } else {
+                        actionButton = `<button class="btn btn-sm btn-success btn-verificar-asistentes" data-post-id="${post.id}">Verificar Asistentes</button>`;
+                    }
+                } else {
+                    actionButton = `<button class="btn btn-sm btn-primary btn-inscribirse" data-post-id="${post.id}">Inscribirse</button>`;
+                }
 
                 container.innerHTML = `
                     <div class="post-header">
@@ -863,6 +881,7 @@
                         <button class="btn btn-sm btn-outline-info btn-terms" data-post-id="${post.id}">
                             📜 Ver Términos
                         </button>
+                        ${actionButton}
                     </div>
                     <div class="comentarios mt-2 collapse" id="comentarios-${post.id}">
                         <div class="comentarios-list mb-2 small">
@@ -875,7 +894,7 @@
                     </div>
                 `;
 
-                if (post.author === USER_ID) {
+                if (isOwner) {
                     container.innerHTML += `<button class="btn btn-sm btn-danger w-100 mt-2 btn-delete" data-post-id="${post.id}">🗑️ Eliminar Publicación</button>`;
                 }
 
@@ -984,6 +1003,37 @@
                 }
                 localStorage.setItem(STORAGE_KEY_SAVED + USER_ID, JSON.stringify(savedEvents));
                 refreshUI();
+            }
+
+            function handleSubscription(postId) {
+                const post = allPosts.find(p => p.id === postId);
+                if (!post) return;
+                if (!post.inscritos) post.inscritos = [];
+                if (userRegistrations.some(reg => reg.postId === postId)) {
+                    alert('Ya estás inscrito en este evento.');
+                    return;
+                }
+                if (post.inscritos.some(u => u.userId === USER_ID)) {
+                    alert('Ya estás inscrito en este evento.');
+                    return;
+                }
+                const confirmation = confirm('Al inscribirte, aceptas los términos y condiciones del evento. ¿Deseas continuar?');
+                if (confirmation) {
+                    const registration = {
+                        postId: post.id,
+                        title: post.text,
+                        author: post.author,
+                        eventDate: post.eventDate,
+                        registrationDate: new Date().toISOString(),
+                        userId: USER_ID
+                    };
+                    userRegistrations.push(registration);
+                    post.inscritos.push({ userId: USER_ID, nombre: currentUser.nombre || USER_ID });
+                    localStorage.setItem('geoplanner_registrations_' + USER_ID, JSON.stringify(userRegistrations));
+                    localStorage.setItem(STORAGE_KEY_POSTS, JSON.stringify(allPosts));
+                    alert('¡Inscripción exitosa!');
+                    refreshUI();
+                }
             }
 
             // --- MAPS & MODALS LOGIC ---
@@ -1125,7 +1175,49 @@
                     updateAndRefresh(newPost);
                 }
             }
-
+            // --- MODALS FOR INSCRITOS & ASISTENCIA ---
+            // Agregar modales solo si no existen ya en el DOM
+            if (!document.getElementById('modal-inscritos')) {
+                const modalInscritos = document.createElement('div');
+                modalInscritos.innerHTML = `
+                <div class="modal fade" id="modal-inscritos" tabindex="-1">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Inscritos al Evento</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body">
+                        <ul id="lista-inscritos" class="list-group"></ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>`;
+                document.body.appendChild(modalInscritos);
+            }
+            if (!document.getElementById('modal-asistencia')) {
+                const modalAsistencia = document.createElement('div');
+                modalAsistencia.innerHTML = `
+                <div class="modal fade" id="modal-asistencia" tabindex="-1">
+                  <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Verificación de Asistencia</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                      </div>
+                      <div class="modal-body">
+                        <div style="max-height:400px;overflow-y:auto;">
+                          <table class="table table-bordered table-striped">
+                            <thead><tr><th>ID de Usuario</th><th>Nombre</th><th>Estado de Asistencia</th></tr></thead>
+                            <tbody id="tabla-asistencia"></tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>`;
+                document.body.appendChild(modalAsistencia);
+            }
 
             // --- EVENT LISTENERS SETUP ---
             function setupEventListeners() {
@@ -1137,6 +1229,9 @@
                 document.getElementById('menu-agenda').addEventListener('click', () => {
                     renderAgenda();
                     agendaModal.show();
+                });
+                document.getElementById('menu-inscripciones').addEventListener('click', () => {
+                    window.location.href = 'mis_inscripciones.html';
                 });
                 document.getElementById('menu-guardados').addEventListener('click', renderSavedEvents);
 
@@ -1175,6 +1270,33 @@
                         const commentInput = button.previousElementSibling;
                         addComment(postId, commentInput.value);
                         commentInput.value = '';
+                    }
+                    if (button.classList.contains('btn-inscribirse')) {
+                        handleSubscription(postId);
+                    }
+                    if (button.classList.contains('btn-ver-inscritos')) {
+                        const post = allPosts.find(p => p.id === postId);
+                        const lista = document.getElementById('lista-inscritos');
+                        lista.innerHTML = post.inscritos.length ? post.inscritos.map(u => `<li class='list-group-item'><strong>${u.userId}</strong> - ${u.nombre}</li>`).join('') : '<li class="list-group-item">No hay inscritos.</li>';
+                        new bootstrap.Modal(document.getElementById('modal-inscritos')).show();
+                    }
+                    if (button.classList.contains('btn-verificar-asistentes')) {
+                        // Simulación de datos de asistencia
+                        const simulados = [
+                            { userId: 'USER001', nombre: 'Ana García', asistio: true },
+                            { userId: 'USER002', nombre: 'Luis Pérez', asistio: true },
+                            { userId: 'USER003', nombre: 'María López', asistio: false },
+                            { userId: 'USER004', nombre: 'Juan Rodríguez', asistio: true },
+                            { userId: 'USER005', nombre: 'Sofía Martínez', asistio: false },
+                            { userId: 'USER006', nombre: 'Carlos Díaz', asistio: true },
+                            { userId: 'USER007', nombre: 'Laura Sánchez', asistio: false },
+                            { userId: 'USER008', nombre: 'Pedro Gómez', asistio: true },
+                            { userId: 'USER009', nombre: 'Elena Fernández', asistio: false },
+                            { userId: 'USER010', nombre: 'Diego Ruiz', asistio: true }
+                        ];
+                        const tabla = document.getElementById('tabla-asistencia');
+                        tabla.innerHTML = simulados.map(u => `<tr><td>${u.userId}</td><td>${u.nombre}</td><td>${u.asistio ? 'Asistió ✅' : 'No asistió ❌'}</td></tr>`).join('');
+                        new bootstrap.Modal(document.getElementById('modal-asistencia')).show();
                     }
                     if (button.classList.contains('btn-terms')) {
                         const post = allPosts.find(p => p.id === postId);
