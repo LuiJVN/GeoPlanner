@@ -116,6 +116,7 @@ header {
 #feed-map {
     flex-grow: 1;
     border-radius: 10px;
+    position: sticky;
 }
 
 #event-detail-sidebar {
