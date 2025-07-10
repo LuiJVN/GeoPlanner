@@ -1,1024 +1,1177 @@
 <!DOCTYPE html>
 <html lang="es">
+<!--prueben-->
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GeoPlanner - Red Social</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <style>
-    :root {
-      --header-bg: linear-gradient(145deg, #007BFF, #003366);
-      --header-text-color: white;
-      --header-icon-bg: rgba(255, 255, 255, 0.15);
-      --header-icon-hover-bg: rgba(255, 255, 255, 0.25);
-      
-      --body-bg: #f0f2f5;
-      
-      --sidebar-bg: linear-gradient(145deg, #007BFF, #003366);
-      --sidebar-text-color: white;
-      --sidebar-hover-bg: rgba(255, 255, 255, 0.15);
-
-      --card-bg: #ffffff;
-      --card-text-color: #333;
-      --card-secondary-text-color: #6c757d;
-
-      --btn-primary-bg: #0d6efd;
-      --btn-primary-text: white;
-      --btn-secondary-bg: #6c757d;
-      --btn-secondary-text: white;
-    }
-    body {
-      background-color: var(--body-bg); /* MODIFICADO */
-      color: var(--card-text-color); /* MODIFICADO */
-      font-family: 'Segoe UI', sans-serif;
-    }
-
-    header {
-      background: var(--header-bg); /* MODIFICADO */
-      color: var(--header-text-color); /* MODIFICADO */
-      padding: 0.75rem 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 1030;
-    }
-
-
-    .search-bar input {
-      width: 300px;
-      border-radius: 20px;
-      padding: 0.4rem 1rem;
-      border: none;
-    }
-
-    .icon-bar {
-      position: relative;
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .icon-button {
-      background-color: var(--header-icon-bg); /* MODIFICADO */
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .icon-button:hover {
-        background-color: var(--header-icon-hover-bg); /* MODIFICADO */
-    }
-    
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      right: 0;
-      top: 55px;
-      background-color: var(--card-bg); /* MODIFICADO */
-      color: var(--card-text-color); /* MODIFICADO */
-      padding: 1rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      border-radius: 10px;
-      width: 360px;
-      z-index: 2000;
-      border: 1px solid #ddd;
-    }
-    
-    .dropdown-content.show {
-        display: block;
-    }
-    
-    .dropdown-header {
-        font-size: 1.2rem;
-        font-weight: bold;
-        margin-bottom: 1rem;
-    }
-
-    .dropdown-item-custom {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 0.5rem;
-        border-radius: 8px;
-        transition: background-color 0.2s;
-        color: var(--card-text-color); /* MODIFICADO */
-    }
-    .dropdown-item-custom:hover {
-        background-color: var(--body-bg); /* MODIFICADO */
-        text-decoration: none;
-        color: inherit;
-    }
-    .dropdown-item-custom img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-
-    .notification-buttons button.btn-primary {
-        background-color: var(--btn-primary-bg) !important; /* MODIFICADO */
-        color: var(--btn-primary-text) !important; /* MODIFICADO */
-    }
-    .notification-buttons button.btn-secondary {
-        background-color: var(--btn-secondary-bg) !important; /* MODIFICADO */
-        color: var(--btn-secondary-text) !important; /* MODIFICADO */
-    }
-
-
-    .main-container {
-      display: flex;
-      justify-content: center;
-      padding: 1.5rem;
-      gap: 2rem;
-    }
-
-    .left-sidebar {
-      width: 250px;
-      background: var(--sidebar-bg); /* MODIFICADO */
-      color: var(--sidebar-text-color); /* MODIFICADO */
-      padding: 1.5rem;
-      border-radius: 10px;
-      height: fit-content;
-      position: sticky;
-      top: 90px;
-    }
-
-    .left-sidebar ul {
-      list-style: none;
-      padding-left: 0;
-    }
-
-    .left-sidebar li {
-      margin-bottom: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      padding: 0.5rem;
-      border-radius: 8px;
-      transition: background-color 0.2s;
-    }
-
-    .left-sidebar li:hover {
-      background-color: var(--sidebar-hover-bg); /* MODIFICADO */
-    }
-    
-    .feed {
-      flex: 1;
-      max-width: 680px;
-    }
-    
-    .right-sidebar {
-        width: 300px;
-        background-color: var(--card-bg); /* MODIFICADO */
-        color: var(--card-text-color); /* MODIFICADO */
-        padding: 1rem;
-        border-radius: 10px;
-        height: fit-content;
-        position: sticky;
-        top: 90px;
-        box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
-    }
-    .right-sidebar small {
-        color: var(--card-secondary-text-color) !important; /* MODIFICADO */
-    }
-
-    .post, .new-post {
-      background-color: var(--card-bg); /* MODIFICADO */
-      color: var(--card-text-color); /* MODIFICADO */
-      border-radius: 10px;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
-    }
-
-    .post img, .new-post img {
-      max-width: 100%;
-      border-radius: 10px;
-      margin-bottom: 0.5rem;
-    }
-    #publish-button, .modal-footer .btn-primary {
-        background-color: var(--btn-primary-bg);
-        color: var(--btn-primary-text);
-        border: none;
-    }
-    .map-container {
-      height: 250px;
-      border-radius: 10px;
-      margin-top: 0.5rem;
-    }
-    
-    #location-display {
-        border: 1px dashed #ccc;
-        padding: 0.5rem;
-        border-radius: 8px;
-        min-height: 40px;
-        background-color: var(--body-bg); /* MODIFICADO */
-        color: var(--card-secondary-text-color); /* MODIFICADO */
-    }
-    #post-map-preview-container {
-        height: 0;
-        transition: height 0.3s ease;
-        border-radius: 10px;
-        margin-top: 0.5rem;
-        overflow: hidden;
-    }
-    #map-modal .modal-dialog {
-        max-width: 800px;
-    }
-    #modal-map-container {
-        height: 50vh;
-        border-radius: 10px;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GeoPlanner - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="css/dashboard.css" />
 </head>
+
 <body>
 
-  <header>
-    <div class="d-flex align-items-center gap-2">
-      <img src="img/LogoMini.png" alt="Logo" style="width: 36px;" />
-      <strong class="fs-5">GeoPlanner</strong>
-    </div>
-    <div class="search-bar">
-      <input type="text" placeholder="Buscar personas o grupos..." />
-    </div>
-    <div class="icon-bar">
-      <span class="icon-button" id="requests-icon" title="Solicitudes de amistad">🤝</span>
-      <div class="dropdown-content" id="requests-dropdown">
-        <div class="dropdown-header">Solicitudes de amistad</div>
-        <a href="#" class="dropdown-item-custom">
-            <img src="img/placeholder.png" alt="user">
-            <div>
-                <strong>Ana Rodriguez</strong> quiere ser tu amiga.
-                <div class="d-flex gap-2 mt-2 notification-buttons">
-                    <button class="btn btn-primary btn-sm">Aceptar</button>
-                    <button class="btn btn-secondary btn-sm">Rechazar</button>
-                </div>
-            </div>
+    <header class="d-flex justify-content-between align-items-center">
+        <a href="dashboard.html" class="d-flex align-items-center gap-2 text-white text-decoration-none">
+            <img src="/placeholder.svg?height=36&width=36" alt="Logo" style="width: 36px;" />
+            <strong class="fs-5">GeoPlanner</strong>
         </a>
-        <hr class="my-2">
-        <a href="#" class="dropdown-item-custom">
-            <img src="img/placeholder.png" alt="user">
-            <div>
-                <strong>Luis Perez</strong> te envió una solicitud.
-                <div class="d-flex gap-2 mt-2 notification-buttons">
-                    <button class="btn btn-primary btn-sm">Aceptar</button>
-                    <button class="btn btn-secondary btn-sm">Rechazar</button>
-                </div>
-            </div>
-        </a>
-      </div>
-
-      <span class="icon-button" id="notifications-icon" title="Notificaciones">🔔</span>
-      <div class="dropdown-content" id="notifications-dropdown">
-        <div class="dropdown-header">Notificaciones</div>
-        <a href="#" class="dropdown-item-custom">
-            <img src="img/estudio.jpg" alt="event">
-            <div><strong>@carlos_martinez</strong> comentó en tu publicación: "¡Allí estaré!".</div>
-        </a>
-        <hr class="my-2">
-        <a href="#" class="dropdown-item-custom">
-            <img src="img/LogoMini.png" alt="system">
-            <div>A <strong>3 personas</strong> más les gustó tu evento "Picnic con amigos".</div>
-        </a>
-         <hr class="my-2">
-        <a href="#" class="dropdown-item-custom">
-            <img src="img/placeholder.png" alt="group">
-            <div>Se ha creado un nuevo evento en el grupo "Amantes del Senderismo".</div>
-        </a>
-      </div>
-
-      <span class="icon-button" id="profile-icon" title="Perfil">👤</span>
-      <div class="dropdown-content" id="profile-dropdown">
-        <a href="perfil.html" class="dropdown-item-custom">
-             <img class="foto-usuario" src="" alt="profile">
-            <div>
-                <span class="nombre-usuario"></span>
-                <br>
-                <small >Ver tu perfil</small>
-            </div>
-        </a>
-        <hr class="my-2">
-         <a href="#" class="dropdown-item-custom">
-            <span>⚙️</span>
-            <div><strong>Configuración</strong></div>
-        </a>
-         <a href="index.html" class="dropdown-item-custom" id="logout-button">
-            <span>➡️</span>
-            <div><strong>Cerrar sesión</strong></div>
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <div class="container-xl">
-    <div class="main-container row">
-      <aside class="left-sidebar col-lg-3 d-none d-lg-block">
-        <ul>
-          <li>🏠 Inicio</li>
-          <li>🧑‍🤝‍🧑 Mis Amigos</li>
-          <li>👨‍👩‍👧‍👦 Grupos</li>
-          <li>📅 Mis Eventos</li>
-        </ul>
-      </aside>
-
-      <div class="col-lg-6 col-md-12">
-        
-        <div class="new-post">
-            <h6><strong>Crear nueva publicación</strong></h6>
-            <textarea id="post-text" class="form-control mb-2" rows="2" placeholder="¿Qué estás organizando?..."></textarea>
-            <label for="file-media" class="form-label">Subir fotos o videos (opcional)</label>
-            <input type="file" id="file-media" class="form-control mb-2" accept="image/*,video/*" />
-            
-            <button class="btn btn-outline-primary w-100 mb-2" type="button" data-bs-toggle="modal" data-bs-target="#map-modal">
-                📍 Seleccionar Ubicación (Obligatorio)
-            </button>
-            <div id="location-display" class="mb-2">No se ha seleccionado ninguna ubicación.</div>
-            
-            <div id="post-map-preview-container"></div>
-            <select class="form-select mb-2" id="privacidad">
-                <option value="publica">Pública</option>
-                <option value="amigos">Solo amigos</option>
-                <option value="privada">Privada con invitación</option>
-            </select>
-            
-            <div class="mb-3">
-              <label for="custom-terms" class="form-label">Términos y Condiciones Personalizados</label>
-              <textarea id="custom-terms" class="form-control" rows="3" placeholder="Escribe términos personalizados aquí..."></textarea>
-              <div class="form-check mt-2">
-                <input class="form-check-input" type="checkbox" id="terms-weapons">
-                <label class="form-check-label" for="terms-weapons">Prohibición de armas</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="terms-illegal-substances">
-                <label class="form-check-label" for="terms-illegal-substances">Prohibición de sustancias ilegales</label>
-              </div>
-            </div>
-            <button id="publish-button" class="btn btn-primary w-100" disabled>Publicar</button>
+        <div class="search-bar">
+            <input type="text" class="form-control" placeholder="Buscar..." />
         </div>
+        <div class="d-flex align-items-center gap-3">
+            <button id="view-toggle-btn" class="btn btn-outline-light btn-sm">Ver Feed Clásico</button>
+            <div class="icon-bar d-flex gap-2">
+                <span class="icon-button" id="map-styles-icon" title="Estilos de Mapa">🗺️</span>
 
-        <main class="feed"></main>
-
-      </div>
-
-      <aside class="right-sidebar col-lg-3 d-none d-xl-block">
-        <h6 class="fw-bold mb-3">Eventos Cercanos a Ti 🗺️</h6>
-        
-        <div class="d-flex flex-column gap-3">
-            <div class="d-flex gap-2">
-                <img src="img/estudio.jpg" alt="evento" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
-                <div>
-                    <div class="fw-bold">Tarde de Cine</div>
-                    <small class="text-muted">Cinex, a 2.5 km</small>
-                    <a href="#" class="d-block">Ver más</a>
+                <div class="dropdown-content" id="map-styles-dropdown">
+                    <div class="dropdown-header">Estilos de Mapa</div>
+                    <div class="map-style-item active" data-style="openstreetmap">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjJGMkYyIi8+CjxwYXRoIGQ9Ik0xMCAzMEwyMCAyMEwzMCAzMEw0MCAyMEw1MCAzMCIgc3Ryb2tlPSIjQ0NDIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+')"></div>
+                        <div>
+                            <strong>OpenStreetMap</strong>
+                            <br><small>Mapa estándar con calles</small>
+                        </div>
+                    </div>
+                    <div class="map-style-item" data-style="satellite">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjNEE5MDQyIi8+CjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjE1IiBmaWxsPSIjNjhCMDVGIi8+CjxyZWN0IHg9IjM1IiB5PSIxNSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjOEFEMDgxIi8+Cjwvc3ZnPg==')"></div>
+                        <div>
+                            <strong>Vista Satelital</strong>
+                            <br><small>Imágenes satelitales</small>
+                        </div>
+                    </div>
+                    <!--
+                    <div class="map-style-item" data-style="terrain">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjVGNUY1Ii8+Cjxwb2x5Z29uIHBvaW50cz0iMTAsNDAgMjAsMTUgMzAsMjUgNDAsNSA1MCwyMCA2MCw0MCIgZmlsbD0iIzk4NzY1NCIvPgo8L3N2Zz4=')"></div>
+                        <div>
+                            <strong>Terreno</strong>
+                            <br><small>Relieve y topografía</small>
+                        </div>
+                    </div> 
+                    <div class="map-style-item" data-style="dark">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjMkYyRjJGIi8+CjxwYXRoIGQ9Ik0xMCAzMEwyMCAyMEwzMCAzMEw0MCAyMEw1MCAzMCIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+')"></div>
+                        <div>
+                            <strong>Modo Oscuro</strong>
+                            <br><small>Tema oscuro para la noche</small>
+                        </div>
+                    </div> -->
                 </div>
-            </div>
-            <div class="d-flex gap-2">
-                <img src="img/placeholder.png" alt="evento" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
-                <div>
-                    <div class="fw-bold">Concierto Acústico</div>
-                    <small class="text-muted">Plaza de la República, a 1.2 km</small>
-                      <a href="#" class="d-block">Ver más</a>
+
+                <span class="icon-button" id="notifications-icon" title="Notificaciones">🔔</span>
+                <div class="dropdown-content" id="notifications-dropdown">
+                    <div class="dropdown-header">Notificaciones</div>
+                    <a href="#" class="dropdown-item-custom">
+                        <img src="/placeholder.svg?height=50&width=50" alt="event">
+                        <div><strong>@carlos_martinez</strong> comentó en tu publicación.</div>
+                    </a>
                 </div>
-            </div>
-            <div class="d-flex gap-2">
-                <img src="img/LogoMini.png" alt="evento" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
-                <div>
-                    <div class="fw-bold">Torneo de Ajedrez</div>
-                    <small class="text-muted">Biblioteca Pública, a 800 m</small>
-                      <a href="#" class="d-block">Ver más</a>
+
+                <span class="icon-button" id="profile-icon" title="Perfil">👤</span>
+                <div class="dropdown-content" id="profile-dropdown">
+                    <a href="perfil.html" class="dropdown-item-custom">
+                        <img class="foto-usuario" src="/placeholder.svg?height=50&width=50" alt="profile">
+                        <div>
+                            <span class="nombre-usuario">Usuario</span>
+                            <svg class="geoplanner-verified-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm5.71,7.29-6,6a1,1,0,0,1-1.42,0l-3-3a1,1,0,0,1,1.42-1.42L11,13.59l5.29-5.3a1,1,0,0,1,1.42,1.42Z" />
+                            </svg>
+                            <br>
+                            <small>Ver tu perfil</small>
+                        </div>
+                    </a>
+                    <hr class="my-2">
+                    <a href="index.html" class="dropdown-item-custom" id="logout-button">
+                        <span>➡️</span>
+                        <div><strong>Cerrar sesión</strong></div>
+                    </a>
                 </div>
             </div>
         </div>
-      </aside>
-    </div>
-  </div>
+    </header>
 
-  <div class="modal fade" id="map-modal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="mapModalLabel">Define la ubicación de tu evento</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <ul class="nav nav-tabs" id="route-type-tabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="simple-route-tab" data-bs-toggle="tab" data-bs-target="#map-panel" type="button" role="tab">📍 Ruta Simple</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="multiple-route-tab" data-bs-toggle="tab" data-bs-target="#map-panel" type="button" role="tab">➯ Ruta Múltiple</button>
-                </li>
+    <div class="main-content">
+        <aside class="left-sidebar">
+            <ul>
+                <li id="menu-agenda">📅 Mi Agenda</li>
+                <li id="menu-inscripciones">🎟️ Mis Inscripciones</li>
+                <li id="menu-guardados">⭐ Eventos Guardados</li>
+                <li>👨‍👩‍👧‍👦 Grupos</li>
             </ul>
-            
-            <p class="form-text mt-2">
-                <strong>Ruta Simple:</strong> Haz clic en el mapa para colocar un único marcador.<br>
-                <strong>Ruta Múltiple:</strong> Haz clic en varios puntos para trazar una ruta.
-            </p>
-            <div id="modal-map-container" style="height: 400px;"></div>
-            <div id="ruta-inputs" class="mt-3"></div> 
+        </aside>
 
+        <div class="content-area">
+            <div id="map-view-container">
+                <div id="feed-map">
+                    <div class="map-filters">
+                        <select id="map-filter-type" class="form-select form-select-sm">
+                            <option value="all">Todos los tipos</option>
+                            <option value="Deporte">Deporte</option>
+                            <option value="Estudio">Estudio</option>
+                            <option value="Social">Social</option>
+                            <option value="Cultural">Cultural</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="event-detail-sidebar"></div>
+            </div>
+            <div id="classic-feed-container">
+                <div id="classic-feed-view">
+                    <div class="create-post-widget">
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="/placeholder.svg?height=40&width=40" class="foto-usuario" alt="user" style="width: 40px; height: 40px; border-radius: 50%;">
+                            <div class="create-post-widget-input" data-bs-toggle="modal" data-bs-target="#create-post-modal">
+                                ¿Qué estás organizando, <span class="nombre-usuario-short">Usuario</span>?
+                            </div>
+                        </div>
+                    </div>
+                    <div id="classic-feed-content"></div>
+                </div>
+            </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-warning" id="clear-map-button">Limpiar Mapa</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-primary" id="accept-location-button">Aceptar</button>
-        </div>
-      </div>
     </div>
-  </div>
 
+    <button class="new-post-button" data-bs-toggle="modal" data-bs-target="#create-post-modal">+</button>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    
-    const STORAGE_KEY = 'geoplanner_posts';
-    const USER_ID = 'juan_sarcos'; 
-
-    const dropdownIcons = {
-        'requests-icon': 'requests-dropdown',
-        'notifications-icon': 'notifications-dropdown',
-        'profile-icon': 'profile-dropdown'
-    };
-    const closeAllDropdowns = () => {
-        Object.values(dropdownIcons).forEach(dropdownId => {
-            const dropdown = document.getElementById(dropdownId);
-            if (dropdown) dropdown.classList.remove('show');
-        });
-    };
-    Object.keys(dropdownIcons).forEach(iconId => {
-        const icon = document.getElementById(iconId);
-        const dropdown = document.getElementById(dropdownIcons[iconId]);
-        if (icon && dropdown) {
-            icon.addEventListener('click', function(event) {
-                event.stopPropagation();
-                const isCurrentlyShown = dropdown.classList.contains('show');
-                closeAllDropdowns();
-                if (!isCurrentlyShown) {
-                    dropdown.classList.add('show');
-                }
-            });
-        }
-    });
-    window.addEventListener('click', () => closeAllDropdowns());
-    const logoutButton = document.getElementById('logout-button');
-    if(logoutButton) {
-        logoutButton.addEventListener('click', () => alert("Cerrando sesión..."));
-    }
-
-    const mapModalEl = document.getElementById('map-modal');
-    const acceptLocationButton = document.getElementById('accept-location-button');
-    const clearMapButton = document.getElementById('clear-map-button');
-    const publishButton = document.getElementById('publish-button');
-    const locationDisplay = document.getElementById('location-display');
-    const postMapPreviewContainer = document.getElementById('post-map-preview-container');
-    
-    let modalMap, postPreviewMap;
-    let routeType = 'simple';
-    let markers = [];
-    let polyline = null;
-    
-    const geoPlannerIcon = L.icon({
-        iconUrl: 'img/LogoMini.png',
-        iconSize: [40, 40],
-        iconAnchor: [20, 40],
-    });
-
-    mapModalEl.addEventListener('shown.bs.modal', function () {
-        if (!modalMap) {
-            modalMap = L.map('modal-map-container').setView([10.654, -71.612], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(modalMap);
-            modalMap.on('click', onMapClick);
-        }
-        setTimeout(() => modalMap.invalidateSize(), 10);
-    });
-
-    document.getElementById('simple-route-tab').addEventListener('click', () => {
-        routeType = 'simple';
-        clearMap();
-    });
-    document.getElementById('multiple-route-tab').addEventListener('click', () => {
-        routeType = 'multiple';
-        clearMap();
-    });
-    
-    const onMapClick = (e) => {
-        if (routeType === 'simple' && markers.length > 0) clearMap();
-        
-        const newMarker = L.marker(e.latlng, { icon: geoPlannerIcon }).addTo(modalMap);
-        markers.push(newMarker);
-        
-        if (routeType === 'multiple') {
-             if (markers.length > 1) {
-                if(polyline) modalMap.removeLayer(polyline);
-                const latlngs = markers.map(m => m.getLatLng());
-                polyline = L.polyline(latlngs, {color: '#007BFF'}).addTo(modalMap);
-            }
-            
-            const rutaInputsContainer = document.getElementById('ruta-inputs');
-            const index = markers.length;
-            const inputGroup = document.createElement('div');
-            inputGroup.className = 'input-group input-group-sm mb-2';
-            inputGroup.innerHTML = `
-                <span class="input-group-text">${index}</span>
-                <input type="text" placeholder="Descripción para el punto ${index}" class="form-control" data-index="${index - 1}">
-            `;
-            rutaInputsContainer.appendChild(inputGroup);
-        }
-    };
-    
-    const clearMap = () => {
-        markers.forEach(m => modalMap.removeLayer(m));
-        markers = [];
-        if (polyline) {
-            modalMap.removeLayer(polyline);
-            polyline = null;
-        }
-        document.getElementById('ruta-inputs').innerHTML = '';
-    };
-    
-    clearMapButton.addEventListener('click', clearMap);
-
-    acceptLocationButton.addEventListener('click', function() {
-        if (markers.length === 0) {
-            alert("Por favor, selecciona al menos un punto en el mapa.");
-            return;
-        }
-
-        const latlngs = markers.map(m => m.getLatLng());
-        locationDisplay.textContent = routeType === 'simple'
-            ? `Ubicación: [${latlngs[0].lat.toFixed(4)}, ${latlngs[0].lng.toFixed(4)}]`
-            : `Ruta Múltiple (${markers.length} puntos)`;
-
-        postMapPreviewContainer.style.height = '200px';
-        if (!postPreviewMap) {
-            postPreviewMap = L.map('post-map-preview-container', { zoomControl: false, scrollWheelZoom: false, dragging: false });
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(postPreviewMap);
-        } else {
-            postPreviewMap.eachLayer(layer => {
-                if (layer instanceof L.Marker || layer instanceof L.Polyline) postPreviewMap.removeLayer(layer);
-            });
-        }
-        
-        latlngs.forEach(latlng => L.marker(latlng, { icon: geoPlannerIcon }).addTo(postPreviewMap));
-        if (routeType === 'multiple' && latlngs.length > 1) {
-            L.polyline(latlngs, {color: '#007BFF'}).addTo(postPreviewMap);
-        }
-        
-        const bounds = L.latLngBounds(latlngs);
-        postPreviewMap.fitBounds(bounds, { padding: [40, 40] });
-
-        publishButton.disabled = false;
-        bootstrap.Modal.getInstance(mapModalEl).hide();
-    });
-
-    function initExamplePosts() {
-        if (localStorage.getItem(STORAGE_KEY)) return;
-        const examples = [
-             {
-                id: 'post_carlos', autor: 'carlos_martinez', username: 'carlos_martinez', texto: 'Nos vemos en el parque central para una sesión de estudio.', privacidad: 'publica', mediaURL: 'img/estudio.jpg',
-                ubicacion: '10.659,-71.611',
-                rutas: [{ coords: '10.659,-71.611', label: 'Punto de encuentro' }],
-                timestamp: new Date().toISOString(), likes: 2, likers: ['ana_g', 'luis_p'], comentarios: [{ autor: 'ana_g', texto: '¡Allí estaré!' }],
-                terms: { custom: 'Ser puntuales.', predefined: ['Prohibición de armas'] }
-            },
-            {
-                id: 'post_valentina', autor: 'valentina_g', username: 'valentina_g', texto: 'Picnic con amigos en el Jardín Botánico este domingo.', privacidad: 'amigos', mediaURL: '',
-                ubicacion: '10.661,-71.618',
-                rutas: [{ coords: '10.661,-71.618', label: 'Lugar del picnic' }],
-                timestamp: new Date().toISOString(), likes: 1, likers: [USER_ID], comentarios: [{ autor: 'valentina_g', texto: 'Invitados confirmados 😊' }],
-                terms: { custom: null, predefined: [] }
-            }
-        ];
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(examples));
-    }
-
-    function loadPosts() {
-        const posts = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-        const feed = document.querySelector('.feed');
-        
-        feed.innerHTML = ''; 
-        posts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-        posts.forEach(post => feed.appendChild(renderPost(post)));
-    }
-
-    function renderPost(post) {
-        const container = document.createElement('div');
-        container.classList.add('post');
-        const privacyBadge = {
-            publica: '🔓 Pública',
-            amigos: '👥 Amigos',
-            privada: '🔒 Privada'
-        }[post.privacidad] || '🔓 Pública';
-
-        // Lógica de renderizado principal
-        container.innerHTML = `
-            <h6>
-                <strong>${post.autor}</strong>
-                <small style="color: gray; font-size: 0.85em;">@${post.username || post.autor}</small>
-                <span class="badge bg-secondary">${privacyBadge}</span>
-            </h6>
-            <p>${post.texto}</p>
-            ${post.mediaURL ? `<img src="${post.mediaURL}" alt="Media" class="img-fluid rounded mb-2">` : ''}
-            <div class="map-container mb-2" id="map-${post.id}"></div>
-            ${post.rutas.length > 1
-                ? `<ol id="ruta-list-${post.id}" class="list-group list-group-flush list-group-numbered mb-2 small"></ol>`
-                : (post.rutas.length === 1 && post.rutas[0].label)
-                ? `<small class="d-block mb-2 text-muted">📍 ${post.rutas[0].label}</small>`
-                : ''}
-            <div class="d-flex gap-2 mt-2">
-                <button class="btn btn-sm btn-outline-danger" id="btn-like-${post.id}">
-                    ${post.likers.includes(USER_ID) ? '💔 Quitar Like' : '❤️ Like'} (<span id="likes-${post.id}">${post.likes}</span>)
-                </button>
-                <button class="btn btn-sm btn-outline-secondary" id="btn-comment-toggle-${post.id}">💬 Comentarios (${post.comentarios.length})</button>
-                <button class="btn btn-sm btn-outline-info" id="btn-terms-${post.id}">📜 Ver Términos</button>
-            </div>
-            <div class="comentarios mt-2 collapse" id="comentarios-${post.id}">
-                <div class="comentarios-list mb-2">
-                    ${post.comentarios.map(c => `<div class="small"><strong>@${c.autor}:</strong> ${c.texto}</div>`).join('')}
+    <!-- Modal: Crear Nueva Publicación -->
+    <div class="modal fade" id="create-post-modal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Crear Nueva Publicación</h5>
+                    <button class="btn btn-sm btn-outline-primary" id="generate-ideas-btn">Generar Ideas ✨</button>
                 </div>
-                <div class="input-group mt-2">
-                    <input type="text" class="form-control form-control-sm" id="input-${post.id}" placeholder="Escribe un comentario...">
-                    <button class="btn btn-sm btn-primary" id="btn-comment-${post.id}">Enviar</button>
+                <div class="modal-body">
+                    <form id="create-post-form">
+                        <div class="input-group mb-3">
+                            <textarea id="post-text" class="form-control" rows="3" placeholder="¿Qué estás organizando?..."></textarea>
+                            <button class="btn btn-outline-secondary" type="button" id="enhance-text-btn" title="Mejorar texto con IA">✨</button>
+                        </div>
+                        <div id="idea-suggestions" class="mb-3"></div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <select class="form-select" id="post-type">
+                                    <option>Social</option>
+                                    <option>Deporte</option>
+                                    <option>Estudio</option>
+                                    <option>Cultural</option>
+                                    <option>Otro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <input type="datetime-local" id="post-date" class="form-control">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <select class="form-select" id="post-privacy">
+                                    <option value="publica">Pública</option>
+                                    <option value="amigos">Solo amigos</option>
+                                    <option value="privada">Privada con invitación</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="file" id="file-media" class="form-control" accept="image/*" />
+                        </div>
+                        <div class="mb-3">
+                            <button class="btn btn-outline-primary w-100" type="button" data-bs-toggle="modal" data-bs-target="#map-select-modal">
+                                📍 Seleccionar Ubicación
+                            </button>
+                            <div id="location-display" class="mt-2">No se ha seleccionado ninguna ubicación.</div>
+                        </div>
+
+                        <!-- SECCIÓN DE TÉRMINOS Y CONDICIONES -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Términos y Condiciones del Evento</label>
+
+                            <!-- Opción 1: Términos Predeterminados -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="terms-option" id="terms-default-radio" value="default" checked>
+                                <label class="form-check-label" for="terms-default-radio">
+                                    Usar Términos y Condiciones de GeoPlanner
+                                </label>
+                            </div>
+                            <div class="p-2 mt-1 mb-2 border rounded bg-light" style="font-size: 0.8rem; max-height: 150px; overflow-y: auto;">
+                                <strong>Al seleccionar esta opción, aceptas y aplicas los siguientes términos a tu evento:</strong>
+                                <p class="mt-1 mb-0 small"><strong>1. Responsabilidad Exclusiva del Organizador:</strong> Usted es el único responsable de la legalidad, seguridad (permisos, control de multitudes, etc.) y contenido de su evento.</p>
+                                <p class="mt-1 mb-0 small"><strong>2. Deslinde de GeoPlanner:</strong> GeoPlanner es solo una plataforma tecnológica y no se hace responsable por ningún incidente, daño o consecuencia legal relacionada con el evento.</p>
+                                <p class="mt-1 mb-0 small"><strong>3. Prohibiciones Estrictas:</strong> Se prohíben terminantemente eventos con actividades ilegales, armas, sustancias ilícitas, violencia o discursos de odio.</p>
+                                <p class="mt-1 mb-0 small"><strong>4. Cooperación con Autoridades:</strong> Al publicar, confirma que su identidad fue verificada y acepta que su información puede ser compartida con las autoridades si se detecta alguna ilegalidad.</p>
+                                <p class="mt-1 mb-0 small"><strong>Al publicar, declara que ha leído y aceptado estos términos.</strong></p>
+                            </div>
+
+                            <!-- Opción 2: Términos Personalizados -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="terms-option" id="terms-custom-radio" value="custom">
+                                <label class="form-check-label" for="terms-custom-radio">
+                                    Usar Términos y Condiciones Personalizados (Bajo tu propio riesgo)
+                                </label>
+                            </div>
+                            <textarea id="custom-terms-textarea" class="form-control mt-2" rows="3" placeholder="Define tus propias reglas y condiciones. Recuerda que eres el único responsable legal de tu evento." style="display: none;"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="publish-button">Publicar</button>
                 </div>
             </div>
-        `;
+        </div>
+    </div>
 
-        // Lógica para el mapa
-        const mapElement = container.querySelector(`#map-${post.id}`);
-        setTimeout(() => {
-             const map = L.map(mapElement, { zoomControl: false, scrollWheelZoom: false, dragging: true });
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    <!-- Modal: Seleccionar Ubicación -->
+    <div class="modal fade" id="map-select-modal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Define la ubicación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" data-bs-target="#create-post-modal" data-bs-toggle="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="simple-route-tab">📍 Ruta Simple</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="multiple-route-tab">➯ Ruta Múltiple</button>
+                        </li>
+                    </ul>
+                    <p class="form-text mt-2">
+                        <strong>Ruta Simple:</strong> Un único marcador.<br>
+                        <strong>Ruta Múltiple:</strong> Traza una ruta con varios puntos.
+                    </p>
+                    <div id="modal-map-container"></div>
+                    <div id="ruta-inputs" class="mt-3"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" id="clear-map-button">Limpiar Mapa</button>
+                    <button type="button" class="btn btn-primary" id="accept-location-button">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            const postMarkers = [];
-            post.rutas.forEach(r => {
-                const latlng = r.coords.split(',').map(Number);
-                const marker = L.marker(latlng, { icon: L.icon({ iconUrl: 'img/LogoMini.png', iconSize: [32, 32], iconAnchor: [16, 32] }) })
-                    .bindPopup(r.label)
-                    .addTo(map);
-                postMarkers.push(marker);
-            });
+    <!-- Modal: Agenda -->
+    <div class="modal fade" id="agenda-modal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mi Agenda Privada</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h6>Nueva Actividad</h6>
+                            <form id="agenda-form">
+                                <div class="mb-2"><input type="text" id="agenda-title" class="form-control" placeholder="Título de la actividad" required></div>
+                                <div class="mb-2"><textarea id="agenda-desc" class="form-control" rows="3" placeholder="Descripción..."></textarea></div>
+                                <div class="mb-2"><input type="datetime-local" id="agenda-date" class="form-control" required></div>
+                                <button type="submit" class="btn btn-primary w-100">Guardar Actividad</button>
+                            </form>
+                        </div>
+                        <div class="col-md-8">
+                            <h6>Mis Actividades</h6>
+                            <div id="agenda-list" class="list-group"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            if (post.rutas.length > 1) {
-                const polyline = L.polyline(post.rutas.map(r => r.coords.split(',').map(Number)), {color: '#007BFF'}).addTo(map);
-                map.fitBounds(polyline.getBounds(), { padding: [30, 30] });
-            } else if (postMarkers.length > 0) {
-                map.setView(postMarkers[0].getLatLng(), 15);
-            }
-             map.invalidateSize();
-        }, 0);
-        
-        // Lógica para la lista de rutas
-        if (post.rutas.length > 1) {
-            const list = container.querySelector(`#ruta-list-${post.id}`);
-            post.rutas.forEach(r => {
-                const li = document.createElement('li');
-                li.className = 'list-group-item';
-                li.textContent = r.label;
-                list.appendChild(li);
-            });
-        }
-        
-        // Listeners para botones de acción
-        container.querySelector(`#btn-like-${post.id}`).addEventListener('click', () => toggleLike(post.id));
-        container.querySelector(`#btn-comment-toggle-${post.id}`).addEventListener('click', () => new bootstrap.Collapse(container.querySelector(`#comentarios-${post.id}`), { toggle: true }));
-        container.querySelector(`#btn-comment-${post.id}`).addEventListener('click', () => {
-            const input = container.querySelector(`#input-${post.id}`);
-            if (input.value.trim()) {
-                addComment(post.id, input.value.trim());
-                input.value = '';
-            }
-        });
+    <!-- Modal: Eventos Guardados -->
+    <div class="modal fade" id="saved-events-modal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Mis Eventos Guardados</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="saved-events-list"></div>
+            </div>
+        </div>
+    </div>
 
-        // INICIO: LÓGICA INTEGRADA (Botón de Términos)
-        container.querySelector(`#btn-terms-${post.id}`).addEventListener('click', () => {
-            if (post.terms) {
-                const predefined = post.terms.predefined && post.terms.predefined.length > 0 ? `Términos predefinidos:\n- ${post.terms.predefined.join('\n- ')}` : '';
-                const custom = post.terms.custom ? `Términos personalizados:\n${post.terms.custom}` : '';
-                const message = [predefined, custom].filter(Boolean).join('\n\n');
-                alert(message || 'No hay términos y condiciones asociados a esta publicación.');
-            } else {
-                alert('No hay términos y condiciones asociados a esta publicación.');
-            }
-        });
-        // FIN: LÓGICA INTEGRADA (Botón de Términos)
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-        // INICIO: LÓGICA INTEGRADA (Botón de Eliminar)
-        if (post.autor === USER_ID) {
-            const deleteButton = document.createElement('button');
-            deleteButton.className = 'btn btn-sm btn-danger w-100 mt-2';
-            deleteButton.id = `btn-delete-${post.id}`;
-            deleteButton.textContent = '🗑️ Eliminar Publicación';
-            deleteButton.addEventListener('click', () => {
-                if (confirm('¿Estás seguro de que quieres eliminar esta publicación?')) {
-                    eliminarPost(post.id);
+            // --- GLOBAL VARIABLES & CONSTANTS ---
+            const STORAGE_KEY_POSTS = 'geoplanner_posts';
+            const STORAGE_KEY_AGENDA = 'geoplanner_agenda_';
+            const STORAGE_KEY_SAVED = 'geoplanner_saved_';
+            let currentUser = JSON.parse(sessionStorage.getItem('currentUser')) || {};
+            const USER_ID = currentUser.nombreUsuario || 'invitado';
+
+            let mainMap, selectionMap, selectionPolyline;
+            let selectedMarkers = [];
+            let routeType = 'simple';
+            let currentView = 'map';
+            let allPosts = [];
+            let agendaItems = [];
+            let savedEvents = [];
+            let currentMapStyle = 'openstreetmap';
+            let currentTileLayer = null;
+
+            const createPostModal = new bootstrap.Modal(document.getElementById('create-post-modal'));
+            const agendaModal = new bootstrap.Modal(document.getElementById('agenda-modal'));
+            const savedEventsModal = new bootstrap.Modal(document.getElementById('saved-events-modal'));
+
+            // Map styles configuration
+            const mapStyles = {
+                openstreetmap: {
+                    name: 'OpenStreetMap',
+                    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    attribution: '© OpenStreetMap contributors'
+                },
+                satellite: {
+                    name: 'Vista Satelital',
+                    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                    attribution: '© Esri'
                 }
-            });
-            container.appendChild(deleteButton);
-        }
-        // FIN: LÓGICA INTEGRADA (Botón de Eliminar)
-
-        return container;
-    }
-
-    function toggleLike(postId) {
-        let posts = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        const postIndex = posts.findIndex(p => p.id === postId);
-        if (postIndex === -1) return;
-
-        const userIndex = posts[postIndex].likers.indexOf(USER_ID);
-        if (userIndex > -1) {
-            posts[postIndex].likers.splice(userIndex, 1);
-            posts[postIndex].likes--;
-        } else {
-            posts[postIndex].likers.push(USER_ID);
-            posts[postIndex].likes++;
-        }
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
-        loadPosts();
-    }
-
-    function addComment(postId, text) {
-        let posts = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        const postIndex = posts.findIndex(p => p.id === postId);
-        if (postIndex === -1) return;
-        
-        posts[postIndex].comentarios.push({ autor: USER_ID, texto: text });
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
-        loadPosts();
-    }
-    
-    // INICIO: FUNCIÓN INTEGRADA
-    function eliminarPost(postId) {
-        let posts = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-        posts = posts.filter(post => post.id !== postId);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
-        loadPosts();
-    }
-    // FIN: FUNCIÓN INTEGRADA
-
-    function guardarPublicacion() {
-        const texto = document.getElementById('post-text').value.trim();
-        const privacidad = document.getElementById('privacidad').value;
-        const archivo = document.getElementById('file-media').files[0];
-        
-        if (markers.length === 0) {
-            alert("Debes seleccionar una ubicación en el mapa."); return;
-        }
-        if (!texto) {
-            alert("El texto de la publicación no puede estar vacío."); return;
-        }
-
-        const latlngs = markers.map(m => m.getLatLng());
-        
-        const rutaInputs = document.querySelectorAll('#ruta-inputs input');
-        const rutas = latlngs.map((latlng, i) => ({
-            coords: `${latlng.lat},${latlng.lng}`,
-            label: rutaInputs[i]?.value.trim() || `Punto de interés ${i + 1}`
-        }));
-
-        // INICIO: LÓGICA INTEGRADA (Guardar Términos)
-        const customTerms = document.getElementById('custom-terms').value.trim();
-        const predefinedTerms = [];
-        if (document.getElementById('terms-weapons').checked) {
-            predefinedTerms.push('Prohibición de armas');
-        }
-        if (document.getElementById('terms-illegal-substances').checked) {
-            predefinedTerms.push('Prohibición de sustancias ilegales');
-        }
-
-        if (!customTerms && predefinedTerms.length === 0) {
-            alert('Debes definir o seleccionar al menos un término o condición.');
-            return;
-        }
-        // FIN: LÓGICA INTEGRADA (Guardar Términos)
-
-        const newPost = {
-            id: 'post_' + Date.now(),
-            autor: USER_ID,
-            username: USER_ID, // Añadido para consistencia
-            texto,
-            privacidad,
-            mediaURL: '',
-            ubicacion: `${latlngs[0].lat},${latlngs[0].lng}`,
-            rutas: rutas,
-            timestamp: new Date().toISOString(),
-            likes: 0,
-            likers: [],
-            comentarios: [],
-            terms: { custom: customTerms, predefined: predefinedTerms } // Añadido
-        };
-
-        if (archivo) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                newPost.mediaURL = e.target.result;
-                guardarYActualizarFeed(newPost);
             };
-            reader.readAsDataURL(archivo);
-        } else {
-            guardarYActualizarFeed(newPost);
-        }
-    }
-    
-    function guardarYActualizarFeed(post) {
-        let posts = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-        posts.push(post);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
-        
-        // Limpieza del formulario original
-        document.getElementById('post-text').value = '';
-        document.getElementById('file-media').value = '';
-        document.getElementById('location-display').textContent = 'Ninguna ubicación seleccionada';
-        document.getElementById('publish-button').disabled = true;
 
-        // INICIO: LÓGICA INTEGRADA (Limpieza de formulario de Términos)
-        document.getElementById('custom-terms').value = '';
-        document.getElementById('terms-weapons').checked = false;
-        document.getElementById('terms-illegal-substances').checked = false;
-        // FIN: LÓGICA INTEGRADA (Limpieza de formulario de Términos)
+            // --- THEME LOGIC ---
+            const temas = {
+                default: {
+                    headerBG: "linear-gradient(145deg, #007BFF, #003366)",
+                    headerText: "white",
+                    bodyBG: "#f0f2f5",
+                    sidebarBG: "linear-gradient(145deg, #007BFF, #003366)",
+                    sidebarText: "white",
+                    cardBG: "#ffffff",
+                    cardText: "#333",
+                    btnPrimaryBG: "#00bfff"
+                },
+                aurora: {
+                    headerBG: "linear-gradient(145deg, #F8CDDA, #1D2B64)",
+                    headerText: "#FFFFFF",
+                    bodyBG: "#fdeff2",
+                    sidebarBG: "linear-gradient(145deg, #F8CDDA, #1D2B64)",
+                    sidebarText: "#FFFFFF",
+                    cardBG: "#ffffff",
+                    cardText: "#1D2B64",
+                    btnPrimaryBG: "#1D2B64"
+                },
+                noche: {
+                    headerBG: "linear-gradient(145deg, #141E30, #243B55)",
+                    headerText: "white",
+                    bodyBG: "#0f172a",
+                    sidebarBG: "linear-gradient(145deg, #141E30, #243B55)",
+                    sidebarText: "white",
+                    cardBG: "#1e293b",
+                    cardText: "#e2e8f0",
+                    btnPrimaryBG: "#38bdf8"
+                },
+                oceano: {
+                    headerBG: "linear-gradient(145deg, #2C3E50, #4CA1AF)",
+                    headerText: "white",
+                    bodyBG: "#eef6f7",
+                    sidebarBG: "linear-gradient(145deg, #2C3E50, #4CA1AF)",
+                    sidebarText: "white",
+                    cardBG: "#ffffff",
+                    cardText: "#2C3E50",
+                    btnPrimaryBG: "#4CA1AF"
+                },
+                amanecer: {
+                    headerBG: "linear-gradient(145deg, #FF512F, #F09819)",
+                    headerText: "white",
+                    bodyBG: "#fff8f2",
+                    sidebarBG: "linear-gradient(145deg, #FF512F, #F09819)",
+                    sidebarText: "white",
+                    cardBG: "#ffffff",
+                    cardText: "#5c2a07",
+                    btnPrimaryBG: "#FF512F"
+                },
+                pastel: {
+                    headerBG: "linear-gradient(145deg, #A1C4FD, #C2E9FB)",
+                    headerText: "#003366",
+                    bodyBG: "#f5f9ff",
+                    sidebarBG: "linear-gradient(145deg, #A1C4FD, #C2E9FB)",
+                    sidebarText: "#003366",
+                    cardBG: "#ffffff",
+                    cardText: "#333",
+                    btnPrimaryBG: "#A1C4FD"
+                },
+                fuego: {
+                    headerBG: "linear-gradient(145deg, #CB356B, #BD3F32)",
+                    headerText: "white",
+                    bodyBG: "#f9f2f3",
+                    sidebarBG: "linear-gradient(145deg, #CB356B, #BD3F32)",
+                    sidebarText: "white",
+                    cardBG: "#ffffff",
+                    cardText: "#4d1024",
+                    btnPrimaryBG: "#CB356B"
+                },
+                bosque: {
+                    headerBG: "linear-gradient(145deg, #11998E, #38EF7D)",
+                    headerText: "white",
+                    bodyBG: "#f2fcf8",
+                    sidebarBG: "linear-gradient(145deg, #11998E, #38EF7D)",
+                    sidebarText: "white",
+                    cardBG: "#ffffff",
+                    cardText: "#043d38",
+                    btnPrimaryBG: "#11998E"
+                },
+                lluvia: {
+                    headerBG: "linear-gradient(145deg, #396afc, #2948ff)",
+                    headerText: "white",
+                    bodyBG: "#f0f2ff",
+                    sidebarBG: "linear-gradient(145deg, #396afc, #2948ff)",
+                    sidebarText: "white",
+                    cardBG: "#ffffff",
+                    cardText: "#192d8b",
+                    btnPrimaryBG: "#396afc"
+                }
+            };
 
-        if(postPreviewMap) {
-            postPreviewMap.remove();
-            postPreviewMap = null;
-            postMapPreviewContainer.style.height = '0px';
-        }
-        clearMap();
-        loadPosts();
-    }
+            // 2. Función para aplicar el tema
+            function applyTheme(themeName) {
+                const root = document.documentElement;
+                const theme = temas[themeName] || temas.noche; // Usar 'noche' como predeterminado si no se encuentra
 
-    initExamplePosts();
-    loadPosts();
-    document.getElementById('publish-button').addEventListener('click', guardarPublicacion);
+                root.style.setProperty('--header-bg', theme.headerBG);
+                root.style.setProperty('--header-text-color', theme.headerText);
+                root.style.setProperty('--header-icon-bg', theme.headerIconBG);
+                root.style.setProperty('--header-icon-hover-bg', `rgba(255, 255, 255, 0.25)`);
 
-});
+                root.style.setProperty('--body-bg', theme.bodyBG);
+                
+                root.style.setProperty('--sidebar-bg', theme.sidebarBG);
+                root.style.setProperty('--sidebar-text-color', theme.sidebarText);
+                root.style.setProperty('--sidebar-hover-bg', `rgba(255, 255, 255, 0.15)`);
 
-    // 1. Objeto con la definición de todos los temas
-    const temas = {
-        default: {
-            headerBG: "linear-gradient(145deg, #007BFF, #003366)",
-            headerText: "white",
-            headerIconBG: "rgba(255, 255, 255, 0.15)",
-            bodyBG: "#f0f2f5",
-            sidebarBG: "linear-gradient(145deg, #007BFF, #003366)",
-            sidebarText: "white",
-            cardBG: "#ffffff",
-            cardText: "#333",
-            btnPrimaryBG: "#00bfff"
-        },
-        aurora: {
-            headerBG: "linear-gradient(145deg, #F8CDDA, #1D2B64)",
-            headerText: "#FFFFFF",
-            headerIconBG: "rgba(255, 255, 255, 0.2)",
-            bodyBG: "#fdeff2",
-            sidebarBG: "linear-gradient(145deg, #1D2B64, #F8CDDA)",
-            sidebarText: "#FFFFFF",
-            cardBG: "#ffffff",
-            cardText: "#1D2B64",
-            btnPrimaryBG: "#1D2B64"
-        },
-        noche: {
-            headerBG: "linear-gradient(145deg, #141E30, #243B55)",
-            headerText: "white",
-            headerIconBG: "rgba(255, 255, 255, 0.1)",
-            bodyBG: "#0f172a",
-            sidebarBG: "linear-gradient(145deg, #141E30, #243B55)",
-            sidebarText: "white",
-            cardBG: "#1e293b",
-            cardText: "#e2e8f0",
-            btnPrimaryBG: "#38bdf8"
-        },
-        oceano: {
-            headerBG: "linear-gradient(145deg, #2C3E50, #4CA1AF)",
-            headerText: "white",
-            headerIconBG: "rgba(255, 255, 255, 0.15)",
-            bodyBG: "#eef6f7",
-            sidebarBG: "linear-gradient(145deg, #2C3E50, #4CA1AF)",
-            sidebarText: "white",
-            cardBG: "#ffffff",
-            cardText: "#2C3E50",
-            btnPrimaryBG: "#4CA1AF"
-        },
-        amanecer: {
-            headerBG: "linear-gradient(145deg, #FF512F, #F09819)",
-            headerText: "white",
-            headerIconBG: "rgba(255, 255, 255, 0.2)",
-            bodyBG: "#fff8f2",
-            sidebarBG: "linear-gradient(145deg, #FF512F, #F09819)",
-            sidebarText: "white",
-            cardBG: "#ffffff",
-            cardText: "#5c2a07",
-            btnPrimaryBG: "#FF512F"
-        },
-        pastel: {
-            headerBG: "linear-gradient(145deg, #A1C4FD, #C2E9FB)",
-            headerText: "#003366",
-            headerIconBG: "rgba(0, 51, 102, 0.1)",
-            bodyBG: "#f5f9ff",
-            sidebarBG: "linear-gradient(145deg, #A1C4FD, #C2E9FB)",
-            sidebarText: "#003366",
-            cardBG: "#ffffff",
-            cardText: "#333",
-            btnPrimaryBG: "#A1C4FD"
-        },
-        fuego: {
-            headerBG: "linear-gradient(145deg, #CB356B, #BD3F32)",
-            headerText: "white",
-            headerIconBG: "rgba(255, 255, 255, 0.15)",
-            bodyBG: "#f9f2f3",
-            sidebarBG: "linear-gradient(145deg, #CB356B, #BD3F32)",
-            sidebarText: "white",
-            cardBG: "#ffffff",
-            cardText: "#4d1024",
-            btnPrimaryBG: "#CB356B"
-        },
-        bosque: {
-            headerBG: "linear-gradient(145deg, #11998E, #38EF7D)",
-            headerText: "white",
-            headerIconBG: "rgba(255, 255, 255, 0.2)",
-            bodyBG: "#f2fcf8",
-            sidebarBG: "linear-gradient(145deg, #11998E, #38EF7D)",
-            sidebarText: "white",
-            cardBG: "#ffffff",
-            cardText: "#043d38",
-            btnPrimaryBG: "#11998E"
-        },
-        lluvia: {
-            headerBG: "linear-gradient(145deg, #396afc, #2948ff)",
-            headerText: "white",
-            headerIconBG: "rgba(255, 255, 255, 0.1)",
-            bodyBG: "#f0f2ff",
-            sidebarBG: "linear-gradient(145deg, #396afc, #2948ff)",
-            sidebarText: "white",
-            cardBG: "#ffffff",
-            cardText: "#192d8b",
-            btnPrimaryBG: "#396afc"
-        }
-    };
+                root.style.setProperty('--card-bg', theme.cardBG);
+                root.style.setProperty('--card-text-color', theme.cardText);
+                
+                root.style.setProperty('--btn-primary-bg', theme.btnPrimaryBG);
+                root.style.setProperty('--btn-primary-text', theme.headerText); // A menudo el texto del botón coincide con el del header
+            }
 
-    // 2. Función para aplicar el tema
-    function applyTheme(themeName) {
-        const root = document.documentElement;
-        const theme = temas[themeName] || temas.noche; // Usar 'noche' como predeterminado si no se encuentra
+            // 3. Obtener tema guardado y aplicarlo
+            const savedTheme = localStorage.getItem('geoPlannerTema');
+            if (savedTheme) {
+                applyTheme(savedTheme);
+            } else {
+                applyTheme('default'); // Aplicar tema por defecto si no hay ninguno guardado
+            }
 
-        root.style.setProperty('--header-bg', theme.headerBG);
-        root.style.setProperty('--header-text-color', theme.headerText);
-        root.style.setProperty('--header-icon-bg', theme.headerIconBG);
-        root.style.setProperty('--header-icon-hover-bg', `rgba(255, 255, 255, 0.25)`);
+            // --- MAP STYLE FUNCTIONS ---
+            function changeMapStyle(styleName) {
+                if (!mapStyles[styleName]) return;
+                
+                currentMapStyle = styleName;
+                const style = mapStyles[styleName];
+                
+                // Update main map
+                if (mainMap && currentTileLayer) {
+                    mainMap.removeLayer(currentTileLayer);
+                }
+                currentTileLayer = L.tileLayer(style.url, {
+                    attribution: style.attribution
+                });
+                if (mainMap) {
+                    currentTileLayer.addTo(mainMap);
+                }
+                
+                // Update selection map if it exists
+                if (selectionMap) {
+                    selectionMap.eachLayer(layer => {
+                        if (layer instanceof L.TileLayer) {
+                            selectionMap.removeLayer(layer);
+                        }
+                    });
+                    L.tileLayer(style.url, {
+                        attribution: style.attribution
+                    }).addTo(selectionMap);
+                }
+                
+                // Update UI
+                document.querySelectorAll('.map-style-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.style === styleName) {
+                        item.classList.add('active');
+                    }
+                });
+                
+                // Save preference
+                localStorage.setItem('geoplanner_map_style', styleName);
+            }
 
-        root.style.setProperty('--body-bg', theme.bodyBG);
-        
-        root.style.setProperty('--sidebar-bg', theme.sidebarBG);
-        root.style.setProperty('--sidebar-text-color', theme.sidebarText);
-        root.style.setProperty('--sidebar-hover-bg', `rgba(255, 255, 255, 0.15)`);
+            // --- DATA INITIALIZATION & MANAGEMENT ---
+            function initData() {
+                // Cargar y mostrar datos del usuario desde localStorage
+                const nombre = localStorage.getItem("geoPlannerNombre") || "Usuario";
+                const apellido = localStorage.getItem("geoPlannerApellido") || "";
+                const foto = localStorage.getItem("geoPlannerFotoPerfil");
+                const tema = localStorage.getItem("geoPlannerTema") || "default";
 
-        root.style.setProperty('--card-bg', theme.cardBG);
-        root.style.setProperty('--card-text-color', theme.cardText);
-        
-        root.style.setProperty('--btn-primary-bg', theme.btnPrimaryBG);
-        root.style.setProperty('--btn-primary-text', theme.headerText); // A menudo el texto del botón coincide con el del header
-    }
+                // Actualizar el objeto currentUser para la lógica interna (como USER_ID)
+                currentUser.nombre = `${nombre} ${apellido}`.trim();
+                currentUser.foto = foto;
 
-    // 3. Obtener tema guardado y aplicarlo
-    const savedTheme = localStorage.getItem('geoPlannerTema');
-    if (savedTheme) {
-        applyTheme(savedTheme);
-    } else {
-        applyTheme('default'); // Aplicar tema por defecto si no hay ninguno guardado
-    }
-    document.addEventListener("DOMContentLoaded", function() {
-    const nombre = localStorage.getItem("geoPlannerNombre") || "Usuario";
-    const apellido = localStorage.getItem("geoPlannerApellido") || "";
-    const foto = localStorage.getItem("geoPlannerFotoPerfil");
-    const tema = localStorage.getItem("geoPlannerTema") || "default";
+                // Actualizar nombre en el perfil y en el widget de creación
+                document.querySelector('.nombre-usuario').textContent = currentUser.nombre;
+                document.querySelector('.nombre-usuario-short').textContent = nombre.split(' ')[0];
 
-    // Cambiar nombre en header o perfil
-    document.querySelectorAll(".nombre-usuario").forEach(el => {
-    el.textContent = `${nombre} ${apellido}`;
-    });
-    
-    // Cambiar foto de perfil
-    if (foto) {
-        document.querySelectorAll(".foto-usuario").forEach(el => {
-        el.src = foto;
+                // Actualizar foto de perfil en todos los elementos relevantes
+                if (foto) {
+                    document.querySelectorAll(".foto-usuario").forEach(el => {
+                        el.src = foto;
+                    });
+                }
+
+                // Load saved map style
+                const savedMapStyle = localStorage.getItem('geoplanner_map_style') || 'openstreetmap';
+                currentMapStyle = savedMapStyle;
+
+                // Cargar publicaciones, agenda y eventos guardados
+                const examplePosts = [{
+                    id: 'post_1',
+                    author: 'ana_gomez',
+                    verified: true,
+                    text: '¡Mañana de senderismo en la montaña! Salimos a las 7 AM.',
+                    privacidad: 'publica',
+                    mediaURL: 'https://images.unsplash.com/photo-1551632811-561732d1e306?q=80&w=2070',
+                    type: 'Deporte',
+                    eventDate: '2025-07-15T07:00:00',
+                    likes: 15,
+                    likers: [],
+                    comentarios: [{
+                        author: 'carlos_ruiz',
+                        text: '¡Allá nos vemos!'
+                    }],
+                    rutas: [{
+                        coords: '10.72,-71.65',
+                        label: 'Entrada principal'
+                    }],
+                    terms: {
+                        type: 'default',
+                        text: ''
+                    }
+                }, {
+                    id: 'post_8',
+                    author: 'juan_sarcos',
+                    verified: true,
+                    text: '¡Vamos al cine a ver el estreno del verano!',
+                    privacidad: 'amigos',
+                    mediaURL: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1975',
+                    type: 'Social',
+                    eventDate: '2025-08-02T20:00:00',
+                    likes: 9,
+                    likers: [USER_ID],
+                    comentarios: [],
+                    rutas: [{
+                        coords: '10.69,-71.63',
+                        label: 'Cinex Galerías'
+                    }],
+                    terms: {
+                        type: 'custom',
+                        text: 'Comprar entradas con antelación. Ser puntuales por favor.'
+                    }
+                }];
+                if (!localStorage.getItem(STORAGE_KEY_POSTS)) {
+                    localStorage.setItem(STORAGE_KEY_POSTS, JSON.stringify(examplePosts));
+                }
+                allPosts = JSON.parse(localStorage.getItem(STORAGE_KEY_POSTS));
+                agendaItems = JSON.parse(localStorage.getItem(STORAGE_KEY_AGENDA + USER_ID)) || [];
+                savedEvents = JSON.parse(localStorage.getItem(STORAGE_KEY_SAVED + USER_ID)) || [];
+
+                // Aplicar el tema guardado
+                applyTheme(tema);
+            }
+
+            // --- VIEW MANAGEMENT & RENDERING ---
+            function toggleView() {
+                currentView = (currentView === 'map') ? 'classic' : 'map';
+                document.getElementById('view-toggle-btn').textContent = currentView === 'map' ? 'Ver Feed Clásico' : 'Ver Vista de Mapa';
+                document.getElementById('map-view-container').style.display = currentView === 'map' ? 'flex' : 'none';
+                document.getElementById('classic-feed-container').style.display = currentView === 'classic' ? 'flex' : 'none';
+                if (currentView === 'map') {
+                    mainMap.invalidateSize();
+                } else {
+                    renderClassicFeed();
+                }
+            }
+
+            function renderClassicFeed() {
+                const feedContent = document.getElementById('classic-feed-content');
+                feedContent.innerHTML = '';
+                allPosts
+                    .sort((a, b) => new Date(b.eventDate) - new Date(a.eventDate))
+                    .forEach(post => feedContent.appendChild(renderPost(post)));
+            }
+
+            function renderPost(post) {
+                const container = document.createElement('div');
+                container.className = 'post';
+
+                const privacyBadge = {
+                    publica: '🔓 Pública',
+                    amigos: '👥 Amigos',
+                    privada: '🔒 Privada'
+                } [post.privacidad] || '🔓 Pública';
+                const isLiked = post.likers.includes(USER_ID);
+                const isSaved = savedEvents.includes(post.id);
+                const verifiedIcon = `<svg class="geoplanner-verified-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm5.71,7.29-6,6a1,1,0,0,1-1.42,0l-3-3a1,1,0,0,1,1.42-1.42L11,13.59l5.29-5.3a1,1,0,0,1,1.42,1.42Z"/></svg>`;
+                const saveStarIcon = `<svg class="save-star-icon ${isSaved ? 'saved' : ''}" data-post-id="${post.id}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
+
+                container.innerHTML = `
+                    <div class="post-header">
+                        <strong>${post.author}</strong>
+                        ${post.verified ? verifiedIcon : ''}
+                        <span class="badge bg-secondary">${privacyBadge}</span>
+                        ${saveStarIcon}
+                    </div>
+                    <p>${post.text}</p>
+                    ${post.mediaURL ? `<img src="${post.mediaURL}" alt="Media" class="img-fluid rounded mb-2" onerror="this.style.display='none'">` : ''}
+                    <div class="map-container mb-2" id="map-${post.id}"></div>
+                    ${post.rutas.length > 1 ? `<ol class="list-group list-group-flush list-group-numbered mb-2 small">${post.rutas.map(r => `<li class="list-group-item">${r.label}</li>`).join('')}</ol>` : ''}
+                    <div class="d-flex gap-2 mt-2 flex-wrap">
+                        <button class="btn btn-sm btn-outline-danger btn-like" data-post-id="${post.id}">
+                            ${isLiked ? '💔 Quitar Like' : '❤️ Like'} (<span>${post.likes}</span>)
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#comentarios-${post.id}">
+                            💬 Comentarios (${post.comentarios.length})
+                        </button>
+                        <button class="btn btn-sm btn-outline-info btn-terms" data-post-id="${post.id}">
+                            📜 Ver Términos
+                        </button>
+                    </div>
+                    <div class="comentarios mt-2 collapse" id="comentarios-${post.id}">
+                        <div class="comentarios-list mb-2 small">
+                            ${post.comentarios.map(c => `<div><strong>@${c.author}:</strong> ${c.text}</div>`).join('') || 'No hay comentarios.'}
+                        </div>
+                        <div class="input-group">
+                            <input type="text" class="form-control form-control-sm" placeholder="Escribe un comentario...">
+                            <button class="btn btn-sm btn-primary btn-comment" data-post-id="${post.id}">Enviar</button>
+                        </div>
+                    </div>
+                `;
+
+                if (post.author === USER_ID) {
+                    container.innerHTML += `<button class="btn btn-sm btn-danger w-100 mt-2 btn-delete" data-post-id="${post.id}">🗑️ Eliminar Publicación</button>`;
+                }
+
+                setTimeout(() => {
+                    const mapElement = container.querySelector(`#map-${post.id}`);
+                    if (mapElement && !mapElement.classList.contains('leaflet-container')) {
+                        const latlngs = post.rutas.map(r => r.coords.split(',').map(Number));
+                        const postMap = L.map(mapElement, {
+                            zoomControl: false,
+                            scrollWheelZoom: false
+                        }).setView(latlngs[0], 13);
+                        
+                        // Use current map style for post maps
+                        const style = mapStyles[currentMapStyle];
+                        L.tileLayer(style.url, {
+                            attribution: style.attribution
+                        }).addTo(postMap);
+                        
+                        latlngs.forEach(latlng => L.marker(latlng).addTo(postMap));
+                        if (latlngs.length > 1) {
+                            const polyline = L.polyline(latlngs, {
+                                color: '#007BFF'
+                            }).addTo(postMap);
+                            postMap.fitBounds(polyline.getBounds(), {
+                                padding: [20, 20]
+                            });
+                        } else {
+                            postMap.setView(latlngs[0], 15);
+                        }
+                    }
+                }, 0);
+                return container;
+            }
+
+            function renderSavedPost(post) {
+                const container = document.createElement('div');
+                container.className = 'post';
+                container.innerHTML = `
+                    <p>${post.text}</p>
+                    <div class="map-container mb-2" id="map-saved-${post.id}"></div>
+                `;
+                setTimeout(() => {
+                    const mapElement = container.querySelector(`#map-saved-${post.id}`);
+                    if (mapElement && !mapElement.classList.contains('leaflet-container')) {
+                        const latlngs = post.rutas.map(r => r.coords.split(',').map(Number));
+                        const postMap = L.map(mapElement, {
+                            zoomControl: false,
+                            scrollWheelZoom: false
+                        }).setView(latlngs[0], 13);
+                        
+                        // Use current map style for saved post maps
+                        const style = mapStyles[currentMapStyle];
+                        L.tileLayer(style.url, {
+                            attribution: style.attribution
+                        }).addTo(postMap);
+                        
+                        latlngs.forEach(latlng => L.marker(latlng).addTo(postMap));
+                        if (latlngs.length > 1) {
+                            const polyline = L.polyline(latlngs, {
+                                color: '#007BFF'
+                            }).addTo(postMap);
+                            postMap.fitBounds(polyline.getBounds(), {
+                                padding: [20, 20]
+                            });
+                        } else {
+                            postMap.setView(latlngs[0], 15);
+                        }
+                    }
+                }, 0);
+                return container;
+            }
+
+            function refreshUI() {
+                renderClassicFeed();
+                renderMapMarkers(document.getElementById('map-filter-type').value);
+            }
+
+            // --- INTERACTION LOGIC ---
+            function toggleLike(postId) {
+                const post = allPosts.find(p => p.id === postId);
+                if (!post) return;
+                const userIndex = post.likers.indexOf(USER_ID);
+                if (userIndex > -1) {
+                    post.likers.splice(userIndex, 1);
+                    post.likes--;
+                } else {
+                    post.likers.push(USER_ID);
+                    post.likes++;
+                }
+                localStorage.setItem(STORAGE_KEY_POSTS, JSON.stringify(allPosts));
+                refreshUI();
+            }
+
+            function addComment(postId, text) {
+                const post = allPosts.find(p => p.id === postId);
+                if (post && text) {
+                    post.comentarios.push({
+                        author: USER_ID,
+                        text: text
+                    });
+                    localStorage.setItem(STORAGE_KEY_POSTS, JSON.stringify(allPosts));
+                    refreshUI();
+                }
+            }
+
+            function eliminarPost(postId) {
+                allPosts = allPosts.filter(p => p.id !== postId);
+                localStorage.setItem(STORAGE_KEY_POSTS, JSON.stringify(allPosts));
+                refreshUI();
+            }
+
+            function toggleSaveEvent(postId) {
+                const index = savedEvents.indexOf(postId);
+                if (index > -1) {
+                    savedEvents.splice(index, 1);
+                } else {
+                    savedEvents.push(postId);
+                }
+                localStorage.setItem(STORAGE_KEY_SAVED + USER_ID, JSON.stringify(savedEvents));
+                refreshUI();
+            }
+
+            // --- MAPS & MODALS LOGIC ---
+            function initMainMap() {
+                mainMap = L.map('feed-map').setView([10.654, -71.612], 12);
+                
+                // Apply saved map style
+                const style = mapStyles[currentMapStyle];
+                currentTileLayer = L.tileLayer(style.url, {
+                    attribution: style.attribution
+                }).addTo(mainMap);
+            }
+
+            function renderMapMarkers(filterType = 'all') {
+                const markerColors = {
+                    'Deporte': 'orange',
+                    'Estudio': 'blue',
+                    'Social': 'green',
+                    'Cultural': 'purple',
+                    'Otro': 'grey'
+                };
+                mainMap.eachLayer(layer => {
+                    if (layer instanceof L.Marker) mainMap.removeLayer(layer);
+                });
+                const filteredPosts = (filterType === 'all') ? allPosts : allPosts.filter(p => p.type === filterType);
+                filteredPosts.forEach(post => {
+                    if (post.rutas && post.rutas.length > 0) {
+                        const latlng = post.rutas[0].coords.split(',').map(Number);
+                        const icon = L.divIcon({
+                            html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32"><path fill="${markerColors[post.type] || 'red'}" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>`,
+                            className: 'dummy',
+                            iconSize: [32, 32],
+                            iconAnchor: [16, 32]
+                        });
+                        const marker = L.marker(latlng, {
+                            icon
+                        }).addTo(mainMap);
+                        marker.on('mouseover', () => marker.bindPopup(`<b>${post.text.substring(0,30)}...</b>`).openPopup());
+                        marker.on('click', () => {
+                            const detailSidebar = document.getElementById('event-detail-sidebar');
+                            detailSidebar.innerHTML = `<div class="post">${renderPost(post).innerHTML}</div>`;
+                            detailSidebar.classList.add('show');
+                        });
+                    }
+                });
+            }
+
+            function renderAgenda() {
+                const list = document.getElementById('agenda-list');
+                list.innerHTML = agendaItems.length ? '' : '<p>No tienes actividades en tu agenda.</p>';
+                agendaItems
+                    .sort((a, b) => new Date(a.date) - new Date(b.date))
+                    .forEach(item => {
+                        const itemEl = document.createElement('div');
+                        itemEl.className = 'list-group-item';
+                        itemEl.innerHTML = `
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">${item.title}</h6>
+                                <small>${new Date(item.date).toLocaleDateString()}</small>
+                            </div>
+                            <p class="mb-1">${item.desc}</p>
+                            <div id="steps-${item.id}" class="mt-2"></div>
+                            <button class="btn btn-sm btn-outline-primary btn-suggest" data-item-id="${item.id}">Sugerir Pasos ✨</button>
+                            <button class="btn btn-sm btn-outline-danger float-end btn-delete-agenda" data-item-id="${item.id}">Eliminar</button>
+                        `;
+                        list.appendChild(itemEl);
+                    });
+            }
+
+            function renderSavedEvents() {
+                const container = document.getElementById('saved-events-list');
+                container.innerHTML = '';
+                const savedPosts = allPosts.filter(post => savedEvents.includes(post.id));
+                if (savedPosts.length === 0) {
+                    container.innerHTML = '<p class="p-3">No tienes eventos guardados.</p>';
+                } else {
+                    savedPosts.forEach(post => container.appendChild(renderSavedPost(post)));
+                }
+                savedEventsModal.show();
+            }
+
+            function savePost() {
+                const text = document.getElementById('post-text').value.trim();
+                if (!text || selectedMarkers.length === 0) {
+                    alert("El texto de la publicación y la ubicación son obligatorios.");
+                    return;
+                }
+
+                const termsOption = document.querySelector('input[name="terms-option"]:checked').value;
+                const customText = document.getElementById('custom-terms-textarea').value.trim();
+
+                if (termsOption === 'custom' && !customText) {
+                    alert("Si eliges usar términos personalizados, el campo no puede estar vacío.");
+                    return;
+                }
+
+                const postTerms = {
+                    type: termsOption,
+                    text: termsOption === 'custom' ? customText : ''
+                };
+
+                const latlngs = selectedMarkers.map(m => m.getLatLng());
+                const rutaInputs = document.querySelectorAll('#ruta-inputs input');
+                const newPost = {
+                    id: 'post_' + Date.now(),
+                    author: USER_ID,
+                    verified: currentUser.verified || false,
+                    text: text,
+                    privacidad: document.getElementById('post-privacy').value,
+                    mediaURL: '',
+                    type: document.getElementById('post-type').value,
+                    eventDate: document.getElementById('post-date').value,
+                    status: 'vigente',
+                    likes: 0,
+                    likers: [],
+                    comentarios: [],
+                    rutas: latlngs.map((latlng, i) => ({
+                        coords: `${latlng.lat},${latlng.lng}`,
+                        label: (rutaInputs[i] && rutaInputs[i].value.trim()) || `Punto ${i + 1}`
+                    })),
+                    terms: postTerms
+                };
+
+                const file = document.getElementById('file-media').files[0];
+                const updateAndRefresh = (post) => {
+                    allPosts.unshift(post);
+                    localStorage.setItem(STORAGE_KEY_POSTS, JSON.stringify(allPosts));
+                    document.getElementById('create-post-form').reset();
+                    document.getElementById('location-display').textContent = 'No se ha seleccionado ninguna ubicación.';
+                    document.getElementById('custom-terms-textarea').style.display = 'none';
+                    selectedMarkers = [];
+                    createPostModal.hide();
+                    refreshUI();
+                };
+
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        newPost.mediaURL = e.target.result;
+                        updateAndRefresh(newPost);
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    updateAndRefresh(newPost);
+                }
+            }
+
+
+            // --- EVENT LISTENERS SETUP ---
+            function setupEventListeners() {
+                document.getElementById('view-toggle-btn').addEventListener('click', toggleView);
+                document.getElementById('publish-button').addEventListener('click', savePost);
+                document.getElementById('map-filter-type').addEventListener('change', (e) => renderMapMarkers(e.target.value));
+                document.querySelector('.create-post-widget-input').addEventListener('click', () => createPostModal.show());
+                document.querySelector('.new-post-button').addEventListener('click', () => createPostModal.show());
+                document.getElementById('menu-agenda').addEventListener('click', () => {
+                    renderAgenda();
+                    agendaModal.show();
+                });
+                document.getElementById('menu-guardados').addEventListener('click', renderSavedEvents);
+
+                // Map styles dropdown functionality
+                const mapStylesIcon = document.getElementById('map-styles-icon');
+                const mapStylesDropdown = document.getElementById('map-styles-dropdown');
+                
+                mapStylesIcon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isShown = mapStylesDropdown.classList.contains('show');
+                    closeAllDropdowns();
+                    if (!isShown) mapStylesDropdown.classList.add('show');
+                });
+
+                // Map style selection
+                document.querySelectorAll('.map-style-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const styleName = item.dataset.style;
+                        changeMapStyle(styleName);
+                        mapStylesDropdown.classList.remove('show');
+                    });
+                });
+
+                const dropdownIcons = {
+                    'notifications-icon': 'notifications-dropdown',
+                    'profile-icon': 'profile-dropdown'
+                };
+                const closeAllDropdowns = () => {
+                    document.getElementById('map-styles-dropdown').classList.remove('show');
+                    Object.values(dropdownIcons).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.classList.remove('show');
+                    });
+                };
+                Object.keys(dropdownIcons).forEach(iconId => {
+                    const icon = document.getElementById(iconId);
+                    const dropdown = document.getElementById(dropdownIcons[iconId]);
+                    if (icon && dropdown) {
+                        icon.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const isShown = dropdown.classList.contains('show');
+                            closeAllDropdowns();
+                            if (!isShown) dropdown.classList.add('show');
+                        });
+                    }
+                });
+                window.addEventListener('click', closeAllDropdowns);
+
+                document.getElementById('classic-feed-content').addEventListener('click', (e) => {
+                    const button = e.target.closest('button, .save-star-icon');
+                    if (!button) return;
+                    const postId = button.dataset.postId;
+                    if (!postId) return;
+                    if (button.classList.contains('btn-like')) toggleLike(postId);
+                    if (button.classList.contains('btn-delete'))
+                        if (confirm('¿Estás seguro de que quieres eliminar esta publicación?')) eliminarPost(postId);
+                    if (button.classList.contains('btn-comment')) {
+                        const commentInput = button.previousElementSibling;
+                        addComment(postId, commentInput.value);
+                        commentInput.value = '';
+                    }
+                    if (button.classList.contains('btn-terms')) {
+                        const post = allPosts.find(p => p.id === postId);
+                        if (post && post.terms) {
+                            let termsContent = '';
+                            const defaultTermsText =
+                                `TÉRMINOS Y CONDICIONES PREDETERMINADOS DE GEOPLANNER\n\n` +
+                                `1. Aceptación de los Términos:\nAl crear y publicar un evento en GeoPlanner, usted (en adelante, "el Organizador") acepta y se compromete a cumplir en su totalidad los siguientes términos y condiciones.\n\n` +
+                                `2. Responsabilidad Exclusiva del Organizador:\nEl Organizador es el único y exclusivo responsable de todos los aspectos del evento, incluyendo pero no limitándose a:\n- Legalidad y Permisos: Asegurar que el evento cumple con todas las leyes y obtener todos los permisos necesarios.\n- Seguridad: Garantizar la seguridad de todos los asistentes y del lugar.\n- Contenido y Actividades: El contenido y las actividades durante el evento son su responsabilidad.\n\n` +
+                                `3. Deslinde de Responsabilidad de GeoPlanner:\nGeoPlanner es una plataforma tecnológica que facilita la conexión y NO organiza, supervisa, ni controla los eventos. Por lo tanto, GeoPlanner se exime de toda responsabilidad por cualquier daño, pérdida, lesión o consecuencia legal que surja del evento.\n\n` +
+                                `4. Prohibiciones Estrictas:\nEstá terminantemente prohibido organizar eventos que involucren o fomenten:\n- Actividades Ilegales.\n- Armas y Explosivos.\n- Sustancias Ilícitas.\n- Violencia, Discursos de Odio o Discriminación.\n\n` +
+                                `5. Verificación de Identidad y Cooperación con la Ley:\nUsted reconoce que su identidad fue verificada. En caso de reportarse una actividad ilícita, GeoPlanner cooperará con las autoridades y podrá proporcionarles su información.\n\n` +
+                                `Al publicar un evento, usted declara haber leído, comprendido y aceptado estos términos en su totalidad.`;
+
+                            if (post.terms.type === 'default') {
+                                termsContent = defaultTermsText;
+                            } else if (post.terms.type === 'custom') {
+                                termsContent = `TÉRMINOS PERSONALIZADOS (BAJO RESPONSABILIDAD DEL ORGANIZADOR):\n\n${post.terms.text}`;
+                            } else {
+                                const predefined = post.terms.predefined && post.terms.predefined.length > 0 ? `Términos predefinidos:\n- ${post.terms.predefined.join('\n- ')}` : '';
+                                const custom = post.terms.custom ? `Términos personalizados:\n${post.terms.custom}` : '';
+                                termsContent = [predefined, custom].filter(Boolean).join('\n\n');
+                            }
+
+                            alert(termsContent || 'No hay términos especificados para este evento.');
+                        }
+                    }
+                    if (button.classList.contains('save-star-icon')) toggleSaveEvent(postId);
+                });
+
+                document.getElementById('agenda-modal').addEventListener('click', async (e) => {
+                    const button = e.target.closest('button');
+                    if (!button) return;
+                    const itemId = button.dataset.itemId;
+                    if (button.classList.contains('btn-delete-agenda')) {
+                        agendaItems = agendaItems.filter(i => i.id !== itemId);
+                        localStorage.setItem(STORAGE_KEY_AGENDA + USER_ID, JSON.stringify(agendaItems));
+                        renderAgenda();
+                    }
+                    if (button.classList.contains('btn-suggest')) {
+                        const item = agendaItems.find(i => i.id === itemId);
+                        if (!item) return;
+                        const prompt = `Para la actividad "${item.title}" programada para el ${item.date}, genera una lista de 5 a 7 pasos o tareas clave para su organización. Responde solo con los pasos, separados por comas.`;
+                        const result = await callGeminiAPI(prompt, button);
+                        if (result) {
+                            const stepsHtml = result.split(',').map(step => `<li class="list-group-item list-group-item-light py-1">${step.trim()}</li>`).join('');
+                            document.getElementById(`steps-${itemId}`).innerHTML = `<ul class="list-group mt-2">${stepsHtml}</ul>`;
+                        }
+                    }
+                });
+                document.getElementById('agenda-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const newItem = {
+                        id: 'agenda_' + Date.now(),
+                        title: document.getElementById('agenda-title').value,
+                        desc: document.getElementById('agenda-desc').value,
+                        date: document.getElementById('agenda-date').value,
+                    };
+                    agendaItems.unshift(newItem);
+                    localStorage.setItem(STORAGE_KEY_AGENDA + USER_ID, JSON.stringify(agendaItems));
+                    renderAgenda();
+                    e.target.reset();
+                });
+
+                const mapSelectModalEl = document.getElementById('map-select-modal');
+                mapSelectModalEl.addEventListener('shown.bs.modal', function() {
+                    if (!selectionMap) {
+                        selectionMap = L.map('modal-map-container').setView([10.654, -71.612], 13);
+                        
+                        // Use current map style for selection map
+                        const style = mapStyles[currentMapStyle];
+                        L.tileLayer(style.url, {
+                            attribution: style.attribution
+                        }).addTo(selectionMap);
+                        
+                        selectionMap.on('click', (e) => {
+                            if (routeType === 'simple' && selectedMarkers.length > 0) clearSelectionMap();
+                            const newMarker = L.marker(e.latlng).addTo(selectionMap);
+                            selectedMarkers.push(newMarker);
+                            if (routeType === 'multiple' && selectedMarkers.length > 1) {
+                                if (selectionPolyline) selectionMap.removeLayer(selectionPolyline);
+                                selectionPolyline = L.polyline(selectedMarkers.map(m => m.getLatLng()), {
+                                    color: '#007BFF'
+                                }).addTo(selectionMap);
+                            }
+                        });
+                    }
+                    setTimeout(() => selectionMap.invalidateSize(), 10);
+                });
+                const clearSelectionMap = () => {
+                    selectedMarkers.forEach(m => selectionMap.removeLayer(m));
+                    selectedMarkers = [];
+                    if (selectionPolyline) {
+                        selectionMap.removeLayer(selectionPolyline);
+                        selectionPolyline = null;
+                    }
+                };
+                document.getElementById('clear-map-button').addEventListener('click', clearSelectionMap);
+                document.getElementById('simple-route-tab').addEventListener('click', () => {
+                    routeType = 'simple';
+                    clearSelectionMap();
+                });
+                document.getElementById('multiple-route-tab').addEventListener('click', () => {
+                    routeType = 'multiple';
+                    clearSelectionMap();
+                });
+                document.getElementById('accept-location-button').addEventListener('click', () => {
+                    if (selectedMarkers.length > 0) {
+                        const latlngs = selectedMarkers.map(m => m.getLatLng());
+                        document.getElementById('location-display').textContent = routeType === 'simple' ? `Ubicación: [${latlngs[0].lat.toFixed(4)}, ${latlngs[0].lng.toFixed(4)}]` : `Ruta Múltiple (${selectedMarkers.length} puntos)`;
+                        bootstrap.Modal.getInstance(mapSelectModalEl).hide();
+                    } else {
+                        alert("Por favor, selecciona al menos un punto.");
+                    }
+                });
+
+                const termsDefaultRadio = document.getElementById('terms-default-radio');
+                const termsCustomRadio = document.getElementById('terms-custom-radio');
+                const customTermsTextarea = document.getElementById('custom-terms-textarea');
+
+                termsDefaultRadio.addEventListener('change', () => {
+                    if (termsDefaultRadio.checked) {
+                        customTermsTextarea.style.display = 'none';
+                    }
+                });
+
+                termsCustomRadio.addEventListener('change', () => {
+                    if (termsCustomRadio.checked) {
+                        customTermsTextarea.style.display = 'block';
+                    }
+                });
+            }
+
+            async function callGeminiAPI(prompt, button) {
+                const originalText = button.innerHTML;
+                button.disabled = true;
+                button.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+                try {
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    const payload = {
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
+                        }]
+                    };
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error(`Error de red: ${response.statusText}`);
+                    const result = await response.json();
+                    if (result.candidates && result.candidates[0].content.parts[0].text) {
+                        return result.candidates[0].content.parts[0].text;
+                    } else {
+                        throw new Error("Respuesta no válida de la API.");
+                    }
+                } catch (error) {
+                    console.error("Error con API de Gemini:", error);
+                    alert("Hubo un error al contactar a la IA.");
+                    return null;
+                } finally {
+                    button.disabled = false;
+                    button.innerHTML = originalText;
+                }
+            }
+
+            // --- INITIALIZATION ---
+            function initialize() {
+                initData();
+                initMainMap();
+                renderMapMarkers();
+                setupEventListeners();
+                renderClassicFeed();
+            }
+
+            initialize();
         });
-    }
-
-    // Aplicar tema visual
-    if (tema !== "default") {
-        document.body.classList.add(`tema-${tema}`);
-    }
-    });
-
-    
-</script>
+    </script>
 </body>
+
 </html>
