@@ -1,3 +1,9 @@
+
+/* Sidebar vertical stacking for dashboard */
+.sidebar-column {
+    display: flex;
+    flex-direction: column;
+}
 :root {
     --header-bg: linear-gradient(145deg, #007BFF, #003366);
     --header-text-color: white;
@@ -46,26 +52,41 @@ header {
     height: calc(100vh - 65px);
 }
 
+
 .left-sidebar {
     width: 250px;
     background: var(--sidebar-bg);
     color: var(--sidebar-text-color);
     padding: 1.5rem;
-    height: 100%;
     transition: all 0.3s;
     flex-shrink: 0;
     border-radius: 20px;
-    height: 300px;
-    margin-top: 10px;
+    height: 250px;
+    margin-top: 15px;
     margin-left: 10px;
 }
 
-.left-sidebar ul {
+.left-sidebar-down {
+    width: 250px;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text-color);
+    padding: 1.5rem;
+    transition: all 0.3s;
+    flex-shrink: 0;
+    border-radius: 20px;
+    height: 360px;
+    margin-top: 15px;
+    margin-left: 10px;
+}
+
+.left-sidebar ul,
+.left-sidebar-down ul {
     list-style: none;
     padding-left: 0;
 }
 
-.left-sidebar li {
+.left-sidebar li,
+.left-sidebar-down li {
     margin-bottom: 1rem;
     font-weight: 500;
     cursor: pointer;
@@ -74,7 +95,8 @@ header {
     transition: background-color 0.2s;
 }
 
-.left-sidebar li:hover {
+.left-sidebar li:hover,
+.left-sidebar-down li:hover {
     background-color: var(--sidebar-hover-bg);
 }
 
