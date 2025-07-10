@@ -25,19 +25,99 @@
         <div class="d-flex align-items-center gap-3">
             <button id="view-toggle-btn" class="btn btn-outline-light btn-sm">Ver Feed Clásico</button>
             <div class="icon-bar d-flex gap-2">
-                <span class="icon-button" id="requests-icon" title="Solicitudes de amistad">🤝</span>
-                <div class="dropdown-content" id="requests-dropdown">
-                    <div class="dropdown-header">Solicitudes de amistad</div>
-                    <a href="#" class="dropdown-item-custom">
-                        <img src="img/placeholder.png" alt="user">
+                <span class="icon-button" id="theme-selector-icon" title="Cambiar Tema">🎨</span>
+                <div class="dropdown-content" id="theme-selector-dropdown">
+                    <div class="dropdown-header">Seleccionar Tema</div>
+                    <div class="theme-item active" data-theme="default">
+                        <div class="theme-preview" data-theme="default"></div>
                         <div>
-                            <strong>Ana Rodriguez</strong> quiere ser tu amiga.
-                            <div class="d-flex gap-2 mt-2">
-                                <button class="btn btn-primary btn-sm">Aceptar</button>
-                                <button class="btn btn-secondary btn-sm">Rechazar</button>
-                            </div>
+                            <strong>Predeterminado</strong>
+                            <br><small>Azul clásico</small>
                         </div>
-                    </a>
+                    </div>
+                    <div class="theme-item" data-theme="aurora">
+                        <div class="theme-preview" data-theme="aurora"></div>
+                        <div>
+                            <strong>Aurora</strong>
+                            <br><small>Rosa y azul</small>
+                        </div>
+                    </div>
+                    <div class="theme-item" data-theme="noche">
+                        <div class="theme-preview" data-theme="noche"></div>
+                        <div>
+                            <strong>Noche</strong>
+                            <br><small>Modo oscuro</small>
+                        </div>
+                    </div>
+                    <div class="theme-item" data-theme="oceano">
+                        <div class="theme-preview" data-theme="oceano"></div>
+                        <div>
+                            <strong>Océano</strong>
+                            <br><small>Azul marino</small>
+                        </div>
+                    </div>
+                    <div class="theme-item" data-theme="amanecer">
+                        <div class="theme-preview" data-theme="amanecer"></div>
+                        <div>
+                            <strong>Amanecer</strong>
+                            <br><small>Naranja y rojo</small>
+                        </div>
+                    </div>
+                    <div class="theme-item" data-theme="pastel">
+                        <div class="theme-preview" data-theme="pastel"></div>
+                        <div>
+                            <strong>Pastel</strong>
+                            <br><small>Azul suave</small>
+                        </div>
+                    </div>
+                    <div class="theme-item" data-theme="fuego">
+                        <div class="theme-preview" data-theme="fuego"></div>
+                        <div>
+                            <strong>Fuego</strong>
+                            <br><small>Rojo intenso</small>
+                        </div>
+                    </div>
+                    <div class="theme-item" data-theme="bosque">
+                        <div class="theme-preview" data-theme="bosque"></div>
+                        <div>
+                            <strong>Bosque</strong>
+                            <br><small>Verde natural</small>
+                        </div>
+                    </div>
+                    <div class="theme-item" data-theme="lluvia">
+                        <div class="theme-preview" data-theme="lluvia"></div>
+                        <div>
+                            <strong>Lluvia</strong>
+                            <br><small>Azul eléctrico</small>
+                        </div>
+                    </div>
+                </div>
+
+                <span class="icon-button" id="map-styles-icon" title="Estilos de Mapa">🗺️</span>
+
+                <div class="dropdown-content" id="map-styles-dropdown">
+                    <div class="dropdown-header">Estilos de Mapa</div>
+                    <div class="map-style-item active" data-style="openstreetmap">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjRjJGMkYyIi8+CjxwYXRoIGQ9Ik0xMCAzMEwyMCAyMEwzMCAzMEw0MCAyMEw1MCAzMCIgc3Ryb2tlPSIjQ0NDIiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zdmc+')"></div>
+                        <div>
+                            <strong>OpenStreetMap</strong>
+                            <br><small>Mapa estándar con calles</small>
+                        </div>
+                    </div>
+                    <div class="map-style-item" data-style="satellite">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjNEE5MDQyIi8+CjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjE1IiBmaWxsPSIjNjhCMDVGIi8+CjxyZWN0IHg9IjM1IiB5PSIxNSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjOEFEMDgxIi8+Cjwvc3ZnPg==')"></div>
+                        <div>
+                            <strong>Vista Satelital</strong>
+                            <br><small>Imágenes satelitales</small>
+                        </div>
+                    </div>
+                    <div class="map-style-item" data-style="hybrid_esri">
+                        <div class="map-style-preview" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjNEE5MDQyIi8+CjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjE1IiBmaWxsPSIjNjhCMDVGIi8+CjxyZWN0IHg9IjM1IiB5PSIxNSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjOEFEMDgxIi8+CjxyZWN0IHg9IjAiIHk9IjIwIiB3aWR0aD0iNjAiIGhlaWdodD0iMjAiIGZpbGw9InVybCgjY2hlY2tlcmJvYXJkKSIvPgo8cGF0aCBkPSJNMTAgMjVMMjAgMTVMMzAgMjVMMTggMzlIMTJDMTQgMzcgMTYgMzMgMTggMjUiIHN0cm9rZT0iIzc2Njc2NyIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KPC9zdmc+')"></div>
+                        <div>
+                            <strong>Satélite con Calles</strong>
+                            <br><small>Imágenes + calles</small>
+                        </div>
+                    </div>
                 </div>
 
                 <span class="icon-button" id="notifications-icon" title="Notificaciones">🔔</span>
@@ -291,11 +371,33 @@
             let allPosts = [];
             let agendaItems = [];
             let savedEvents = [];
+            let currentMapStyle = 'openstreetmap';
+            let currentTileLayer = null;
             let userRegistrations = [];
 
             const createPostModal = new bootstrap.Modal(document.getElementById('create-post-modal'));
             const agendaModal = new bootstrap.Modal(document.getElementById('agenda-modal'));
             const savedEventsModal = new bootstrap.Modal(document.getElementById('saved-events-modal'));
+
+            const mapStyles = {
+                openstreetmap: {
+                    name: 'OpenStreetMap',
+                    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    attribution: '© OpenStreetMap contributors'
+                },
+                satellite: {
+                    name: 'Vista Satelital',
+                    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                    attribution: '© Esri'
+                    },
+                hybrid_esri: {
+                    name: 'Satélite con Calles (Esri)',
+                    // URL de la capa satelital base de Esri
+                    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                    attribution: '© Esri',
+                }
+            };
+
 
             // --- THEME LOGIC ---
             const temas = {
@@ -412,15 +514,81 @@
                 
                 root.style.setProperty('--btn-primary-bg', theme.btnPrimaryBG);
                 root.style.setProperty('--btn-primary-text', theme.headerText); // A menudo el texto del botón coincide con el del header
+
+                // Actualizar la UI del selector de temas
+                document.querySelectorAll('.theme-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.theme === themeName) {
+                        item.classList.add('active');
+                    }
+                });
+
+                // Guardar el tema seleccionado
+                localStorage.setItem('geoPlannerTema', themeName);
             }
 
-            // 3. Obtener tema guardado y aplicarlo
-            const savedTheme = localStorage.getItem('geoPlannerTema');
-            if (savedTheme) {
-                applyTheme(savedTheme);
-            } else {
-                applyTheme('default'); // Aplicar tema por defecto si no hay ninguno guardado
+            let currentOverlayLayer = null; // Variable para la capa de superposición de calles
+
+            function changeMapStyle(styleName) {
+                if (!mapStyles[styleName]) return;
+                currentMapStyle = styleName;
+                const style = mapStyles[styleName];
+
+                // Limpiar capas existentes
+                if (mainMap && currentTileLayer) {
+                    mainMap.removeLayer(currentTileLayer);
+                }
+                if (mainMap && currentOverlayLayer) {
+                    mainMap.removeLayer(currentOverlayLayer);
+                    currentOverlayLayer = null;
+                }
+                if (selectionMap) {
+                    selectionMap.eachLayer(layer => {
+                        if (layer instanceof L.TileLayer) {
+                            selectionMap.removeLayer(layer);
+                        }
+                    });
+                }
+
+                // Añadir la capa base
+                currentTileLayer = L.tileLayer(style.url, { attribution: style.attribution });
+                if (mainMap) {
+                    currentTileLayer.addTo(mainMap);
+                }
+                if (selectionMap) {
+                    L.tileLayer(style.url, { attribution: style.attribution }).addTo(selectionMap);
+                }
+
+                // Si el estilo es 'hybrid_esri', añade la capa de calles como superposición
+                if (styleName === 'hybrid_esri') {
+                    currentOverlayLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+                        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, TomTom, OpenStreetMap contributors',
+                        pane: 'overlayPane' // Asegura que la capa de superposición esté por encima
+                    });
+                    if (mainMap) {
+                        currentOverlayLayer.addTo(mainMap);
+                        currentOverlayLayer.setZIndex(10); // Un z-index más alto para que esté encima
+                    }
+                    if (selectionMap) {
+                        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+                            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, TomTom, OpenStreetMap contributors',
+                            pane: 'overlayPane'
+                        }).addTo(selectionMap).setZIndex(10);
+                    }
+                }
+
+                // Actualizar UI
+                document.querySelectorAll('.map-style-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.style === styleName) {
+                        item.classList.add('active');
+                    }
+                });
+
+                // Guardar preferencia
+                localStorage.setItem('geoplanner_map_style', styleName);
             }
+
 
             // --- DATA INITIALIZATION & MANAGEMENT ---
             function initData() {
@@ -928,15 +1096,59 @@
                 });
                 document.getElementById('menu-guardados').addEventListener('click', renderSavedEvents);
 
+                const themeSelectorIcon = document.getElementById('theme-selector-icon');
+                const themeSelectorDropdown = document.getElementById('theme-selector-dropdown');
+                
+                themeSelectorIcon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isShown = themeSelectorDropdown.classList.contains('show');
+                    closeAllDropdowns();
+                    if (!isShown) themeSelectorDropdown.classList.add('show');
+                });
+
+                // Theme selection
+                document.querySelectorAll('.theme-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const themeName = item.dataset.theme;
+                        applyTheme(themeName);
+                        themeSelectorDropdown.classList.remove('show');
+                    });
+                });
+
+                // Map styles dropdown functionality
+                const mapStylesIcon = document.getElementById('map-styles-icon');
+                const mapStylesDropdown = document.getElementById('map-styles-dropdown');
+                
+                mapStylesIcon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isShown = mapStylesDropdown.classList.contains('show');
+                    closeAllDropdowns();
+                    if (!isShown) mapStylesDropdown.classList.add('show');
+                });
+
+                // Map style selection
+                document.querySelectorAll('.map-style-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const styleName = item.dataset.style;
+                        changeMapStyle(styleName);
+                        mapStylesDropdown.classList.remove('show');
+                    });
+                });
+
+
                 const dropdownIcons = {
                     'requests-icon': 'requests-dropdown',
                     'notifications-icon': 'notifications-dropdown',
                     'profile-icon': 'profile-dropdown'
                 };
-                const closeAllDropdowns = () => Object.values(dropdownIcons).forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.classList.remove('show');
-                });
+                const closeAllDropdowns = () => {
+                    document.getElementById('theme-selector-dropdown').classList.remove('show');
+                    document.getElementById('map-styles-dropdown').classList.remove('show');
+                    Object.values(dropdownIcons).forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.classList.remove('show');
+                    });
+                };
                 Object.keys(dropdownIcons).forEach(iconId => {
                     const icon = document.getElementById(iconId);
                     const dropdown = document.getElementById(dropdownIcons[iconId]);
@@ -1058,7 +1270,14 @@
                 mapSelectModalEl.addEventListener('shown.bs.modal', function() {
                     if (!selectionMap) {
                         selectionMap = L.map('modal-map-container').setView([10.654, -71.612], 13);
-                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(selectionMap);
+                        
+                        // Use current map style for selection map
+                        const style = mapStyles[currentMapStyle];
+                        L.tileLayer(style.url, {
+                            attribution: style.attribution
+                        }).addTo(selectionMap);
+                        
+                        
                         selectionMap.on('click', (e) => {
                             if (routeType === 'simple' && selectedMarkers.length > 0) clearSelectionMap();
                             const newMarker = L.marker(e.latlng).addTo(selectionMap);
