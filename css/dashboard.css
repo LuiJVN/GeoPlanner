@@ -441,3 +441,51 @@ header {
         .theme-preview[data-theme="lluvia"]::before {
             background: linear-gradient(145deg, #396afc, #2948ff);
         }
+
+/* NUEVOS ESTILOS PARA FUNCIONALIDADES AGREGADAS */
+
+/* Estilos adicionales para los marcadores personalizados */
+.user-location-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.public-event-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Animación suave para el marcador del usuario */
+.user-location-marker img {
+  transition: all 0.3s ease;
+}
+
+/* Efecto hover para los marcadores de eventos públicos */
+.public-event-marker:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+/* Estilos para el popup de distancia */
+.distance-popup {
+  font-size: 14px;
+  font-weight: bold;
+  color: #007bff;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border: 2px solid #007bff;
+}
+
+.distance-popup .distance-text {
+  color: #dc3545;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.distance-popup .event-title {
+  color: #333;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
