@@ -444,6 +444,81 @@ header {
 
 /* NUEVOS ESTILOS PARA FUNCIONALIDADES AGREGADAS */
 
+/* Botón flotante crear publicación */
+#floating-create-post-btn {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 2000;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  border: none;
+  transition: width 0.3s cubic-bezier(.4,0,.2,1), box-shadow 0.2s, background 0.2s, border-radius 0.3s cubic-bezier(.4,0,.2,1);
+  overflow: hidden;
+  cursor: pointer;
+  gap: 0;
+  padding: 0 12px 0 12px;
+}
+
+#floating-create-post-btn .floating-btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  width: 32px;
+  height: 32px;
+  text-align: center;
+  color: var(--btn-primary-text);
+  font-size: 2rem;
+  transition: color 0.2s;
+}
+
+#floating-create-post-btn .floating-btn-text {
+  opacity: 0;
+  white-space: nowrap;
+  margin-left: 0px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--btn-primary-text);
+  max-width: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  pointer-events: none;
+  transition: opacity 0.2s, margin-left 0.3s, max-width 0.3s;
+}
+
+#floating-create-post-btn:hover {
+  width: 210px;
+  border-radius: 28px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  background: linear-gradient(90deg, var(--btn-primary-bg) 60%, #38bdf8 100%);
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+#floating-create-post-btn:hover .floating-btn-text {
+  opacity: 1;
+  margin-left: 2px;
+  max-width: 140px;
+  overflow: visible;
+  pointer-events: auto;
+}
+
+#floating-create-post-btn:hover .floating-btn-icon {
+  color: var(--btn-primary-text);
+}
+
 /* Estilos adicionales para los marcadores personalizados */
 .user-location-marker {
   background: transparent !important;

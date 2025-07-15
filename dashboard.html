@@ -10,6 +10,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="bootstrap-icons/bootstrap-icons.min.css" />
 </head>
 
 <body>
@@ -194,8 +195,18 @@
                             <option value="Otro">Otro</option>
                         </select>
                     </div>
+                    <!-- Botón flotante para crear publicación -->
+<button id="floating-create-post-btn" class="btn btn-primary shadow-lg" style="position: absolute; bottom: 24px; right: 24px; z-index: 1050;" title="Crear publicación">
+    <span class="floating-btn-icon"><i class="bi bi-plus-lg"></i></span>
+    <span class="floating-btn-text">Crear Publicación</span>
+</button>
+<!-- Botón flotante para centrar mapa en la ubicación del usuario -->
+<button id="center-map-btn" class="btn btn-light shadow" style="position: absolute; bottom: 96px; right: 28px; z-index: 1050; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;" title="Centrar en mi ubicación">
+    <i class="bi bi-crosshair"></i>
+</button>
                 </div>
                 <div id="event-detail-sidebar"></div>
+                <!-- El botón de cerrar se agrega dinámicamente en el JS -->
             </div>
             <div id="classic-feed-container">
                 <div id="classic-feed-view">
@@ -418,9 +429,22 @@
             let currentTileLayer = null;
             let userRegistrations = [];
 
+
             // NUEVAS VARIABLES PARA FUNCIONALIDADES AGREGADAS
             let userLocationMarker = null;
             let userLocation = null;
+
+            // --- CENTRAR MAPA EN UBICACIÓN DEL USUARIO ---
+            const centerMapBtn = document.getElementById('center-map-btn');
+            if (centerMapBtn) {
+                centerMapBtn.addEventListener('click', function () {
+                    if (mainMap && userLocation) {
+                        mainMap.setView([userLocation.lat, userLocation.lng], mainMap.getZoom(), { animate: true });
+                    } else {
+                        alert('Ubicación de usuario no disponible.');
+                    }
+                });
+            }
 
             const createPostModal = new bootstrap.Modal(document.getElementById('create-post-modal'));
             const agendaModal = new bootstrap.Modal(document.getElementById('agenda-modal'));
@@ -1157,8 +1181,15 @@
                             }
 
                             const detailSidebar = document.getElementById('event-detail-sidebar');
-                            detailSidebar.innerHTML = `<div class="post">${renderPost(post).innerHTML}${distanceInfo}</div>`;
+                            // Botón de cerrar
+                            const closeBtn = `<button id=\"close-event-detail\" class=\"btn btn-sm btn-secondary mb-2\" style=\"float:right;\">Cerrar ✖</button>`;
+                            detailSidebar.innerHTML = closeBtn + `<div class=\"post\">${renderPost(post).innerHTML}${distanceInfo}</div>`;
                             detailSidebar.classList.add('show');
+                            // Listener para cerrar
+                            document.getElementById('close-event-detail').onclick = () => {
+                                detailSidebar.classList.remove('show');
+                                detailSidebar.innerHTML = '';
+                            };
                         });
                     }
                 });
@@ -1313,7 +1344,16 @@
                 document.getElementById('publish-button').addEventListener('click', savePost);
                 document.getElementById('map-filter-type').addEventListener('change', (e) => renderMapMarkers(e.target.value));
                 document.querySelector('.create-post-widget-input').addEventListener('click', () => createPostModal.show());
-                document.querySelector('.new-post-button').addEventListener('click', () => createPostModal.show());
+                // Botón flotante para crear publicación
+                const floatingBtn = document.getElementById('floating-create-post-btn');
+                if (floatingBtn) {
+                    floatingBtn.addEventListener('click', () => createPostModal.show());
+                }
+                // Botón clásico (por si existe en el feed clásico)
+                const classicBtn = document.querySelector('.new-post-button');
+                if (classicBtn) {
+                    classicBtn.addEventListener('click', () => createPostModal.show());
+                }
                 document.getElementById('menu-agenda').addEventListener('click', () => {
                     renderAgenda();
                     agendaModal.show();
@@ -1517,17 +1557,37 @@
                 });
 
                 const mapSelectModalEl = document.getElementById('map-select-modal');
+                // Refuerza la apertura del modal de selección de mapa como secundario
+                const openMapSelectModal = () => {
+                    // Oculta el modal principal visualmente, pero no lo cierra
+                    const createPostModalEl = document.getElementById('create-post-modal');
+                    if (createPostModalEl) {
+                        createPostModalEl.classList.add('modal-blur');
+                    }
+                    const modalInstance = bootstrap.Modal.getOrCreateInstance(mapSelectModalEl, { backdrop: 'static', keyboard: false });
+                    modalInstance.show();
+                };
+                // Reemplaza el evento de apertura del modal de selección de mapa en el botón correspondiente
+                const selectLocationBtn = document.getElementById('select-location-btn');
+                if (selectLocationBtn) {
+                    // Elimina cualquier atributo data-bs-toggle del botón
+                    selectLocationBtn.removeAttribute('data-bs-toggle');
+                    selectLocationBtn.removeAttribute('data-bs-target');
+                    selectLocationBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        // Abre el modal secundario sin cerrar el principal
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(mapSelectModalEl);
+                        modalInstance.show();
+                    });
+                }
                 mapSelectModalEl.addEventListener('shown.bs.modal', function () {
                     if (!selectionMap) {
                         selectionMap = L.map('modal-map-container').setView([10.654, -71.612], 13);
-
                         // Use current map style for selection map
                         const style = mapStyles[currentMapStyle];
                         L.tileLayer(style.url, {
                             attribution: style.attribution
                         }).addTo(selectionMap);
-
-
                         selectionMap.on('click', (e) => {
                             if (routeType === 'simple' && selectedMarkers.length > 0) clearSelectionMap();
                             const newMarker = L.marker(e.latlng).addTo(selectionMap);
@@ -1541,6 +1601,13 @@
                         });
                     }
                     setTimeout(() => selectionMap.invalidateSize(), 10);
+                });
+                mapSelectModalEl.addEventListener('hidden.bs.modal', function () {
+                    // Al cerrar el modal de selección de ubicación, vuelve a mostrar el principal
+                    const createPostModalEl = document.getElementById('create-post-modal');
+                    if (createPostModalEl) {
+                        createPostModalEl.classList.remove('modal-blur');
+                    }
                 });
                 const clearSelectionMap = () => {
                     selectedMarkers.forEach(m => selectionMap.removeLayer(m));
@@ -1560,13 +1627,22 @@
                     clearSelectionMap();
                 });
                 document.getElementById('accept-location-button').addEventListener('click', () => {
-                    if (selectedMarkers.length > 0) {
-                        const latlngs = selectedMarkers.map(m => m.getLatLng());
-                        document.getElementById('location-display').textContent = routeType === 'simple' ? `Ubicación: [${latlngs[0].lat.toFixed(4)}, ${latlngs[0].lng.toFixed(4)}]` : `Ruta Múltiple (${selectedMarkers.length} puntos)`;
-                        bootstrap.Modal.getInstance(mapSelectModalEl).hide();
-                    } else {
-                        alert("Por favor, selecciona al menos un punto.");
-                    }
+    if (selectedMarkers.length > 0) {
+        const latlngs = selectedMarkers.map(m => m.getLatLng());
+        document.getElementById('location-display').textContent = routeType === 'simple' ? `Ubicación: [${latlngs[0].lat.toFixed(4)}, ${latlngs[0].lng.toFixed(4)}]` : `Ruta Múltiple (${selectedMarkers.length} puntos)`;
+        // Quita el foco del botón para evitar el warning de accesibilidad
+        document.activeElement.blur();
+        // Cierra el modal de selección de ubicación
+        bootstrap.Modal.getInstance(mapSelectModalEl).hide();
+        // Remueve el blur del modal principal y lo muestra explícitamente
+        const createPostModalEl = document.getElementById('create-post-modal');
+        if (createPostModalEl) {
+            createPostModalEl.classList.remove('modal-blur');
+            bootstrap.Modal.getOrCreateInstance(createPostModalEl).show();
+        }
+    } else {
+        alert("Por favor, selecciona al menos un punto.");
+    }
                 });
 
                 const termsDefaultRadio = document.getElementById('terms-default-radio');
