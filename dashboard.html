@@ -111,7 +111,7 @@
                     </div>
                     <div class="map-style-item" data-style="satellite">
                         <div class="map-style-preview"
-                            style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjNEE5MDQyIi8+CjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjE1IiBmaWxsPSIjNjhCMDVGIi8+CjxyZWN0IHg9IjM1IiB5PSIxNSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjOEFEMDgxIi8+Cjwvc3ZnPg==')">
+                            style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjNEE5MDQyIi8+CjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjE1IiBmaWxsPSIjNjhCMDVGIi8+CjxyZWN0IHg9IjM1IiB5PSIxNSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjOEFEMDgxIi8+Cjwvc3ZnPg==')">
                         </div>
                         <div>
                             <strong>Vista Satelital</strong>
@@ -120,7 +120,7 @@
                     </div>
                     <div class="map-style-item" data-style="hybrid_esri">
                         <div class="map-style-preview"
-                            style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjNEE5MDQyIi8+CjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjE1IiBmaWxsPSIjNjhCMDVGIi8+CjxyZWN0IHg9IjM1IiB5PSIxNSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjOEFEMDgxIi8+CjxyZWN0IHg9IjAiIHk9IjIwIiB3aWR0aD0iNjAiIGhlaWdodD0iMjAiIGZpbGw9InVybCgjY2hlY2tlcmJvYXJkKSIvPgo8cGF0aCBkPSJNMTAgMjVMMjAgMTVMMzAgMjVMMTggMzlIMTJDMTQgMzcgMTYgMzMgMTggMjUiIHN0cm9rZT0iIzc2Njc2NyIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KPC9zdmc+')">
+                            style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA2MCA0MCIgZmlsbD0ibm9uZSIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjNEE5MDQyIi8+CjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjE1IiBmaWxsPSIjNjhCMDVGIi8+CjxyZWN0IHg9IjM1IiB5PSIxNSIgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjOEFEMDgxIi8+CjxyZWN0IHg9IjAiIHk9IjIwIiB3aWR0aD0iNjAiIGhlaWdodD0iMjAiIGZpbGw9InVybCgjY2hlY2tlcmJvYXJkKSIvPgo8cGF0aCBkPSJNMTAgMjVMMjAgMTVMMzAgMjVMMTggMzlIMTJDMTQgMzcgMTYgMzMgMTggMjUiIHN0cm9rZT0iIzc2Njc2NyIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KPC9zdmc+')">
                         </div>
                         <div>
                             <strong>Satélite con Calles</strong>
@@ -435,6 +435,7 @@
             // NUEVAS VARIABLES PARA FUNCIONALIDADES AGREGADAS
             let userLocationMarker = null;
             let userLocation = null;
+            let routingControl = null;
 
             // --- CENTRAR MAPA EN UBICACIÓN DEL USUARIO ---
             const centerMapBtn = document.getElementById('center-map-btn');
@@ -1143,14 +1144,23 @@
             }
 
             function markRouteOnMap(puntoInicio, puntoFinal) {
-
-                L.Routing.control({
+                // Borra la ruta anterior si existe
+                borrarRuta();
+                routingControl = L.Routing.control({
                     waypoints: [
                         L.latLng(puntoInicio),
                         L.latLng(puntoFinal)
                     ],
 
                 }).addTo(mainMap);
+            }
+
+            function borrarRuta() {
+                // Elimina el control de rutas si existe
+                if (routingControl) {
+                    mainMap.removeControl(routingControl);
+                    routingControl = null;
+                }
             }
 
             function renderMapMarkers(filterType = 'all') {
@@ -1202,7 +1212,10 @@
                             // Listener para cerrar
                             document.getElementById('close-event-detail').onclick = () => {
                                 detailSidebar.classList.remove('show');
+                                borrarRuta();
+                                console.log('monda');
                                 detailSidebar.innerHTML = '';
+                                
                             };
                         });
                     }
