@@ -239,7 +239,7 @@
                         </div>
                     </a>
                     <hr class="my-2">
-                    <a href="index.html" class="dropdown-item-custom" id="logout-button">
+                    <a href="inicio.html" class="dropdown-item-custom" id="logout-button">
                         <span>➡️</span>
                         <div><strong>Cerrar sesión</strong></div>
                     </a>
@@ -515,9 +515,9 @@
             const contactoBtn = document.getElementById('contacto-btn');
             if (contactoBtn) {
                 contactoBtn.addEventListener('click', function () {
-                    const destinatario = 'luijo.villalobos@gmail.com';
+                    const destinatario = 'geoplanner.contact@gmail.com';
                     const asunto = encodeURIComponent('Ayuda desde GeoPlanner');
-                    const cuerpo = encodeURIComponent('Hola, necesito ayuda');
+                    const cuerpo = encodeURIComponent('Describe aqui tu problema...');
                     const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${destinatario}&su=${asunto}&body=${cuerpo}`;
                     window.open(url, '_blank');
                 });
