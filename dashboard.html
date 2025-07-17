@@ -1076,6 +1076,7 @@
                 const now = new Date();
                 const eventDate = new Date(post.eventDate);
                 let actionButton = '';
+                const yaInscrito = (userRegistrations && userRegistrations.some(reg => reg.postId === post.id)) || (post.inscritos && post.inscritos.some(u => u.userId === USER_ID));
                 if (isOwner) {
                     if (eventDate > now) {
                         actionButton = `<button class="btn btn-sm btn-warning btn-ver-inscritos" data-post-id="${post.id}">Ver Inscritos</button>`;
@@ -1083,7 +1084,11 @@
                         actionButton = `<button class="btn btn-sm btn-success btn-verificar-asistentes" data-post-id="${post.id}">Verificar Asistentes</button>`;
                     }
                 } else {
-                    actionButton = `<button class="btn btn-sm btn-primary btn-inscribirse" data-post-id="${post.id}">Inscribirse</button>`;
+                    if (yaInscrito) {
+                        actionButton = `<button class="btn btn-sm" style="background:#FFD600;color:#222;font-weight:bold;pointer-events:none;cursor:default;" disabled data-post-id="${post.id}">Ya estás inscrito al evento</button>`;
+                    } else {
+                        actionButton = `<button class="btn btn-sm btn-primary btn-inscribirse" data-post-id="${post.id}">Inscribirse</button>`;
+                    }
                 }
 
                 container.innerHTML = `
