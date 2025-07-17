@@ -433,6 +433,7 @@
             const USER_ID = currentUser.nombreUsuario || 'invitado';
 
             let mainMap, selectionMap, selectionPolyline;
+            let selectionRoutingControl = null;
             let selectedMarkers = [];
             let routeType = 'simple';
             let currentView = 'map';
@@ -1177,13 +1178,18 @@
                 }).addTo(mainMap);
             }
 
-            function borrarRuta() {
-                // Elimina el control de rutas si existe
-                if (routingControl) {
-                    mainMap.removeControl(routingControl);
-                    routingControl = null;
-                }
-            }
+function borrarRuta() {
+    // Elimina el control de rutas del mapa principal si existe
+    if (routingControl) {
+        mainMap.removeControl(routingControl);
+        routingControl = null;
+    }
+    // Elimina el control de rutas del mapa de selección si existe
+    if (typeof selectionRoutingControl !== 'undefined' && selectionRoutingControl && selectionMap) {
+        selectionMap.removeControl(selectionRoutingControl);
+        selectionRoutingControl = null;
+    }
+}
 
             function renderMapMarkers(filterType = 'all') {
                 // Limpiar marcadores existentes (excepto el del usuario)
@@ -1687,8 +1693,7 @@
                         L.tileLayer(style.url, {
                             attribution: style.attribution
                         }).addTo(selectionMap);
-                        // Routing control for the selection modal
-                        let selectionRoutingControl = null;
+                        // Routing control for the selection modal (global)
                         selectionMap.on('click', (e) => {
                             if (routeType === 'simple' && selectedMarkers.length > 0) clearSelectionMap();
                             const newMarker = L.marker(e.latlng).addTo(selectionMap);
@@ -1742,12 +1747,15 @@
                         selectionPolyline = null;
                     }
                     // Remove routing control if exists
-                    if (typeof selectionRoutingControl !== 'undefined' && selectionRoutingControl) {
+                    if (selectionRoutingControl) {
                         selectionMap.removeControl(selectionRoutingControl);
                         selectionRoutingControl = null;
                     }
                 };
-                document.getElementById('clear-map-button').addEventListener('click', clearSelectionMap);
+                document.getElementById('clear-map-button').addEventListener('click', () => {
+                    clearSelectionMap();
+                    borrarRuta();
+                });
                 document.getElementById('simple-route-tab').addEventListener('click', () => {
                     routeType = 'simple';
                     clearSelectionMap();
