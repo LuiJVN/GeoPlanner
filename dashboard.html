@@ -1144,14 +1144,12 @@
             }
 
             function markRouteOnMap(puntoInicio, puntoFinal) {
-                // Borra la ruta anterior si existe
-                borrarRuta();
                 routingControl = L.Routing.control({
                     waypoints: [
                         L.latLng(puntoInicio),
                         L.latLng(puntoFinal)
                     ],
-
+                    createMarker: function() { return null; } // Oculta los marcadores de inicio y fin
                 }).addTo(mainMap);
             }
 
