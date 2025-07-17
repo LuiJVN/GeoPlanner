@@ -1190,6 +1190,7 @@
                         }).addTo(mainMap);
 
                         marker.on('mouseover', () => marker.bindPopup(`<b>${post.text.substring(0, 30)}...</b><br><small>Evento público</small>`).openPopup());
+                        marker.on('mouseout', () => marker.closePopup());
                         marker.on('click', () => {
                             // Calcular distancia si tenemos la ubicación del usuario
                             let distanceInfo = '';
