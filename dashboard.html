@@ -1144,12 +1144,23 @@
             }
 
             function markRouteOnMap(puntoInicio, puntoFinal) {
+                // Nueva versión: acepta un array de puntos (waypoints)
+                borrarRuta();
+                let waypoints = [];
+                // Si recibe un array de arrays, lo usamos directamente
+                if (Array.isArray(puntoInicio) && Array.isArray(puntoInicio[0])) {
+                    waypoints = puntoInicio.map(wp => L.latLng(wp[0], wp[1]));
+                } else {
+                    // Compatibilidad con la llamada antigua
+                    waypoints = [L.latLng(puntoInicio), L.latLng(puntoFinal)];
+                }
+                if (waypoints.length < 2) {
+                    console.log("Se necesitan al menos 2 puntos para trazar una ruta.");
+                    return;
+                }
                 routingControl = L.Routing.control({
-                    waypoints: [
-                        L.latLng(puntoInicio),
-                        L.latLng(puntoFinal)
-                    ],
-                    createMarker: function() { return null; } // Oculta los marcadores de inicio y fin
+                    waypoints: waypoints,
+                    createMarker: function() { return null; },
                 }).addTo(mainMap);
             }
 
@@ -1200,7 +1211,7 @@
                                     latlng[0], latlng[1]
                                 );
                                 markRouteOnMap(userLocation, latlng);
-                                distanceInfo = `<div class="mt-2 p-2 bg-info text-white rounded"><strong>📍 Distancia desde tu ubicación:</strong><br>${formatDistance(distance)}</div>`;
+                                distanceInfo = `<div class=\"mt-2 p-2 bg-info text-white rounded\"><strong>📍 Distancia desde tu ubicación:</strong><br>${formatDistance(distance)}</div>`;
                             }
 
                             const detailSidebar = document.getElementById('event-detail-sidebar');
@@ -1208,13 +1219,61 @@
                             const closeBtn = `<button id=\"close-event-detail\" class=\"btn btn-sm btn-secondary mb-2\" style=\"float:right;\">Cerrar ✖</button>`;
                             detailSidebar.innerHTML = closeBtn + `<div class=\"post\">${renderPost(post).innerHTML}${distanceInfo}</div>`;
                             detailSidebar.classList.add('show');
+                            // Trazar la ruta múltiple si hay más de un punto
+                            let waypointMarkers = [];
+                            if (post.rutas.length > 1) {
+                                let allWaypoints = post.rutas.map(r => r.coords.split(',').map(Number));
+                                // Si hay ubicación del usuario, anteponerla a la ruta
+                                let routeWaypoints = allWaypoints;
+                                if (userLocation) {
+                                    routeWaypoints = [[userLocation.lat, userLocation.lng], ...allWaypoints];
+                                }
+                                markRouteOnMap(routeWaypoints);
+                                // Agregar marcadores solo si hay más de dos puntos en la ruta original (sin la ubicación del usuario)
+                                if (post.rutas.length !== 1) {
+                                    for (let i = 0; i < allWaypoints.length; i++) {
+                                        const wp = allWaypoints[i];
+                                        const marker = L.marker(wp, {
+                                            icon: L.divIcon({
+                                                className: 'waypoint-marker',
+                                                html: `<div style='background:#fff;border:2px solid #007BFF;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#007BFF;'>${i+1}</div>`,
+                                                iconSize: [18, 18],
+                                                iconAnchor: [9, 9]
+                                            })
+                                        }).addTo(mainMap);
+                                        waypointMarkers.push(marker);
+                                    }
+                                }
+                            } else if (post.rutas.length === 1) {
+                                // Ruta simple: desde la ubicación del usuario hasta el punto de la publicación
+                                let point = post.rutas[0].coords.split(',').map(Number);
+                                if (userLocation) {
+                                    let waypoints = [[userLocation.lat, userLocation.lng], point];
+                                    markRouteOnMap(waypoints);
+                                } else {
+                                    // Si no hay ubicación del usuario, solo muestra el punto
+                                    borrarRuta();
+                                    const marker = L.marker(point, {
+                                        icon: L.divIcon({
+                                            className: 'waypoint-marker',
+                                            html: `<div style='background:#fff;border:2px solid #007BFF;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#007BFF;'>1</div>` ,
+                                            iconSize: [18, 18],
+                                            iconAnchor: [9, 9]
+                                        })
+                                    }).addTo(mainMap);
+                                    waypointMarkers.push(marker);
+                                }
+                            }
                             // Listener para cerrar
                             document.getElementById('close-event-detail').onclick = () => {
                                 detailSidebar.classList.remove('show');
                                 borrarRuta();
-                                console.log('monda');
+                                // Eliminar los marcadores de waypoints si existen
+                                if (waypointMarkers && waypointMarkers.length) {
+                                    waypointMarkers.forEach(m => mainMap.removeLayer(m));
+                                    waypointMarkers = [];
+                                }
                                 detailSidebar.innerHTML = '';
-                                
                             };
                         });
                     }
@@ -1614,15 +1673,41 @@
                         L.tileLayer(style.url, {
                             attribution: style.attribution
                         }).addTo(selectionMap);
+                        // Routing control for the selection modal
+                        let selectionRoutingControl = null;
                         selectionMap.on('click', (e) => {
                             if (routeType === 'simple' && selectedMarkers.length > 0) clearSelectionMap();
                             const newMarker = L.marker(e.latlng).addTo(selectionMap);
                             selectedMarkers.push(newMarker);
+                            // Remove previous routing control if exists
+                            if (selectionRoutingControl) {
+                                selectionMap.removeControl(selectionRoutingControl);
+                                selectionRoutingControl = null;
+                            }
                             if (routeType === 'multiple' && selectedMarkers.length > 1) {
-                                if (selectionPolyline) selectionMap.removeLayer(selectionPolyline);
-                                selectionPolyline = L.polyline(selectedMarkers.map(m => m.getLatLng()), {
-                                    color: '#007BFF'
+                                // Remove polyline if exists (legacy)
+                                if (selectionPolyline) {
+                                    selectionMap.removeLayer(selectionPolyline);
+                                    selectionPolyline = null;
+                                }
+                                // Prepare waypoints
+                                const waypoints = selectedMarkers.map(m => m.getLatLng());
+                                selectionRoutingControl = L.Routing.control({
+                                    waypoints: waypoints,
+                                    createMarker: function() { return null; },
+                                    routeWhileDragging: false,
+                                    show: false,
+                                    addWaypoints: false,
+                                    lineOptions: {
+                                        styles: [{color: '#007BFF', opacity: 0.8, weight: 5}]
+                                    }
                                 }).addTo(selectionMap);
+                            } else if (routeType === 'multiple' && selectedMarkers.length === 1) {
+                                // Remove routing control if only one marker
+                                if (selectionRoutingControl) {
+                                    selectionMap.removeControl(selectionRoutingControl);
+                                    selectionRoutingControl = null;
+                                }
                             }
                         });
                     }
@@ -1641,6 +1726,11 @@
                     if (selectionPolyline) {
                         selectionMap.removeLayer(selectionPolyline);
                         selectionPolyline = null;
+                    }
+                    // Remove routing control if exists
+                    if (typeof selectionRoutingControl !== 'undefined' && selectionRoutingControl) {
+                        selectionMap.removeControl(selectionRoutingControl);
+                        selectionRoutingControl = null;
                     }
                 };
                 document.getElementById('clear-map-button').addEventListener('click', clearSelectionMap);
