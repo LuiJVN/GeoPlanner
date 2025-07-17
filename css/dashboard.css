@@ -564,3 +564,21 @@ header {
   font-size: 12px;
   margin-bottom: 2px;
 }
+
+#address-suggestions {
+    max-height: 250px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 0 0 8px 8px;
+    display: none;
+}
+#address-suggestions .list-group-item {
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+#address-suggestions .list-group-item:hover {
+    background: #f0f2f5;
+}
+.search-marker {
+    z-index: 5000;
+}
