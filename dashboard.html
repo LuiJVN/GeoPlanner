@@ -511,13 +511,14 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Redirección a WhatsApp al hacer click en el botón de contacto
+            // Redirección a Gmail al hacer click en el botón de contacto
             const contactoBtn = document.getElementById('contacto-btn');
             if (contactoBtn) {
                 contactoBtn.addEventListener('click', function () {
-                    const telefono = '584126759039';
-                    const mensaje = encodeURIComponent('Hola, necesito ayuda');
-                    const url = `https://wa.me/${telefono}?text=${mensaje}`;
+                    const destinatario = 'luijo.villalobos@gmail.com';
+                    const asunto = encodeURIComponent('Ayuda desde GeoPlanner');
+                    const cuerpo = encodeURIComponent('Hola, necesito ayuda');
+                    const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${destinatario}&su=${asunto}&body=${cuerpo}`;
                     window.open(url, '_blank');
                 });
             }
