@@ -1417,7 +1417,7 @@
                             }
 
                             const detailSidebar = document.getElementById('event-detail-sidebar');
-                            const closeBtn = `<button id=\"close-event-detail\" class=\"btn btn-sm btn-secondary mb-2\" style=\"float:right;\">Cerrar ✖</button>`;
+                            const closeBtn = `<button id=\"close-event-detail\" class=\"btn btn-sm btn-secondary mb-2\" style=\"float:right;\">✖</button>`;
                             detailSidebar.innerHTML = closeBtn + `<div class=\"post\">${renderPost(post).innerHTML}${distanceInfo}</div>`;
                             detailSidebar.classList.add('show');
                             // Delegar eventos para los botones del sidebar
@@ -1426,16 +1426,30 @@
                                 if (!button) return;
                                 const postId = button.dataset.postId;
                                 if (!postId) return;
-                                if (button.classList.contains('btn-like')) toggleLike(postId);
-                                if (button.classList.contains('btn-delete'))
-                                    if (confirm('¿Estás seguro de que quieres eliminar esta publicación?')) eliminarPost(postId);
+                                let needsSidebarRefresh = false;
+                                if (button.classList.contains('btn-like')) {
+                                    toggleLike(postId);
+                                    needsSidebarRefresh = true;
+                                }
+                                if (button.classList.contains('btn-delete')) {
+                                    if (confirm('¿Estás seguro de que quieres eliminar esta publicación?')) {
+                                        eliminarPost(postId);
+                                        // Cerrar el sidebar si se elimina el post
+                                        detailSidebar.classList.remove('show');
+                                        borrarRuta();
+                                        detailSidebar.innerHTML = '';
+                                        return;
+                                    }
+                                }
                                 if (button.classList.contains('btn-comment')) {
                                     const commentInput = button.previousElementSibling;
                                     addComment(postId, commentInput.value);
                                     commentInput.value = '';
+                                    needsSidebarRefresh = true;
                                 }
                                 if (button.classList.contains('btn-inscribirse')) {
                                     handleSubscription(postId);
+                                    needsSidebarRefresh = true;
                                 }
                                 if (button.classList.contains('btn-ver-inscritos')) {
                                     const post = allPosts.find(p => p.id === postId);
@@ -1470,7 +1484,26 @@
                                         alert(termsContent);
                                     }
                                 }
-                                if (button.classList.contains('save-star-icon')) toggleSaveEvent(postId);
+                                if (button.classList.contains('save-star-icon')) {
+                                    toggleSaveEvent(postId);
+                                    needsSidebarRefresh = true;
+                                }
+                                // Si la acción requiere refrescar el sidebar, volver a renderizar el contenido
+                                if (needsSidebarRefresh) {
+                                    const post = allPosts.find(p => p.id === postId);
+                                    let distanceInfo = '';
+                                    if (userLocation && post && post.rutas && post.rutas.length > 0) {
+                                        const latlng = post.rutas[0].coords.split(',').map(Number);
+                                        const distance = calculateDistance(
+                                            userLocation.lat, userLocation.lng,
+                                            latlng[0], latlng[1]
+                                        );
+                                        distanceInfo = `<div class=\"mt-2 p-2 bg-info text-white rounded\"><strong>📍 Distancia desde tu ubicación:</strong><br>${formatDistance(distance)}</div>`;
+                                    }
+                                    const closeBtn = `<button id=\"close-event-detail\" class=\"btn btn-sm btn-secondary mb-2\" style=\"float:right;\">Cerrar ✖</button>`;
+                                    detailSidebar.innerHTML = closeBtn + `<div class=\"post\">${renderPost(post).innerHTML}${distanceInfo}</div>`;
+                                    detailSidebar.classList.add('show');
+                                }
                             };
                             let waypointMarkers = [];
                             if (post.rutas.length > 1) {
