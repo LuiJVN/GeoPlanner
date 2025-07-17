@@ -12,6 +12,50 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
     <link rel="stylesheet" href="css/dashboard.css" />
+    <style>
+        /* Scrollbar personalizado para el dropdown de temas */
+        #theme-selector-dropdown {
+            scrollbar-width: thin;
+            scrollbar-color: var(--scrollbar-thumb, #007BFF) var(--scrollbar-track, #e0e0e0);
+        }
+        #theme-selector-dropdown::-webkit-scrollbar {
+            width: 8px;
+        }
+        #theme-selector-dropdown::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb, #007BFF);
+            border-radius: 6px;
+        }
+        #theme-selector-dropdown::-webkit-scrollbar-track {
+            background: var(--scrollbar-track, #e0e0e0);
+        }
+
+        /* Botón de búsqueda cambia con el tema */
+        #address-search-btn {
+            background: var(--btn-primary-bg, #007BFF) !important;
+            color: var(--btn-primary-text, #fff) !important;
+            border: none;
+        }
+        #address-search-btn:hover, #address-search-btn:focus {
+            filter: brightness(0.92);
+        }
+    </style>
+    <style>
+        /* Scrollbar personalizado para el dropdown de temas */
+        #theme-selector-dropdown {
+            scrollbar-width: thin;
+            scrollbar-color: var(--scrollbar-thumb, #007BFF) var(--scrollbar-track, #e0e0e0);
+        }
+        #theme-selector-dropdown::-webkit-scrollbar {
+            width: 8px;
+        }
+        #theme-selector-dropdown::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb, #007BFF);
+            border-radius: 6px;
+        }
+        #theme-selector-dropdown::-webkit-scrollbar-track {
+            background: var(--scrollbar-track, #e0e0e0);
+        }
+    </style>
     <link rel="stylesheet" href="bootstrap-icons/bootstrap-icons.min.css" />
     <style>
         .terms-preview {
@@ -65,7 +109,7 @@
             <button id="view-toggle-btn" class="btn btn-outline-light btn-sm">Ver Feed Clásico</button>
             <div class="icon-bar d-flex gap-2">
                 <span class="icon-button" id="theme-selector-icon" title="Cambiar Tema">🎨</span>
-                <div class="dropdown-content" id="theme-selector-dropdown">
+                <div class="dropdown-content" id="theme-selector-dropdown" style="max-height: 320px; overflow-y: auto;">
                     <div class="dropdown-header">Seleccionar Tema</div>
                     <div class="theme-item active" data-theme="default">
                         <div class="theme-preview" data-theme="default"></div>
@@ -126,7 +170,7 @@
                     <div class="theme-item" data-theme="lluvia">
                         <div class="theme-preview" data-theme="lluvia"></div>
                         <div>
-                            <strong>Lluvia</strong>
+                            <strong>Lluvia Eléctrica</strong>
                             <br><small>Azul eléctrico</small>
                         </div>
                     </div>
@@ -209,7 +253,7 @@
                     <li>👨‍👩‍👧‍👦 Grupos</li>
                 </ul>
             </aside>
-            <aside class="left-sidebar-down">
+            <aside class="left-sidebar-down" id="map-filter-type">
                 <ul>
                     <li id="1">Todos los tipos</li>
                     <li id="2">Deporte</li>
@@ -223,16 +267,6 @@
         <div class="content-area">
             <div id="map-view-container">
                 <div id="feed-map">
-                    <div class="map-filters">
-                        <select id="map-filter-type" class="form-select form-select-sm">
-                            <option value="all">Todos los tipos</option>
-                            <option value="Deporte">Deporte</option>
-                            <option value="Estudio">Estudio</option>
-                            <option value="Social">Social</option>
-                            <option value="Cultural">Cultural</option>
-                            <option value="Otro">Otro</option>
-                        </select>
-                    </div>
                     <!-- Botón flotante para crear publicación -->
                     <button id="floating-create-post-btn" class="btn btn-primary shadow-lg"
                         style="position: absolute; bottom: 24px; right: 24px; z-index: 1050;" title="Crear publicación">
@@ -293,7 +327,6 @@
                                     <option>Deporte</option>
                                     <option>Estudio</option>
                                     <option>Cultural</option>
-                                    <option>Otro</option>
                                 </select>
                             </div>
                             <div class="col-md-4 mb-3">
@@ -727,6 +760,20 @@
                 root.style.setProperty('--btn-primary-bg', theme.btnPrimaryBG);
                 root.style.setProperty('--btn-primary-text', theme.headerText);
 
+                // Scrollbar color según el tema
+                let scrollbarThumb = theme.btnPrimaryBG || '#007BFF';
+                let scrollbarTrack = '#e0e0e0';
+                if (themeName === 'noche') {
+                    scrollbarTrack = '#222c3a';
+                } else {
+                    scrollbarTrack = '#FFFFFF';
+                }
+                root.style.setProperty('--scrollbar-thumb', scrollbarThumb);
+                root.style.setProperty('--scrollbar-track', scrollbarTrack);
+                // Botón de búsqueda cambia con el tema
+                root.style.setProperty('--btn-primary-bg', theme.btnPrimaryBG);
+                root.style.setProperty('--btn-primary-text', theme.headerText);
+
                 document.querySelectorAll('.theme-item').forEach(item => {
                     item.classList.remove('active');
                     if (item.dataset.theme === themeName) {
@@ -973,14 +1020,39 @@
                 if (currentView === 'map') {
                     mainMap.invalidateSize();
                 } else {
+                    // Mantener el filtro activo en left-sidebar-down
+                    const sidebar = document.getElementById('map-filter-type');
+                    if (sidebar) {
+                        sidebar.querySelectorAll('li').forEach(li => {
+                            li.classList.remove('active');
+                            // typeMap igual que en el filtro
+                            const typeMap = {
+                                '1': 'all',
+                                '2': 'Deporte',
+                                '3': 'Estudio',
+                                '4': 'Social',
+                                '5': 'Cultural',
+                                '6': 'Otro'
+                            };
+                            if (typeMap[li.id] === classicFeedFilterType) {
+                                li.classList.add('active');
+                            }
+                        });
+                    }
                     renderClassicFeed();
                 }
             }
 
+            // Filtro de tipo de evento usando left-sidebar-down
+            let classicFeedFilterType = 'all';
             function renderClassicFeed() {
                 const feedContent = document.getElementById('classic-feed-content');
                 feedContent.innerHTML = '';
-                allPosts
+                let filteredPosts = allPosts;
+                if (classicFeedFilterType !== 'all') {
+                    filteredPosts = allPosts.filter(post => post.type === classicFeedFilterType);
+                }
+                filteredPosts
                     .sort((a, b) => new Date(b.eventDate) - new Date(a.eventDate))
                     .forEach(post => feedContent.appendChild(renderPost(post)));
             }
@@ -1158,6 +1230,37 @@
             }
 
             // --- INTERACTION LOGIC ---
+            // Filtro de tipo de evento para el feed clásico usando left-sidebar-down
+            function setupClassicFeedSidebarFilter() {
+                const sidebar = document.getElementById('map-filter-type');
+                if (!sidebar) return;
+                sidebar.querySelectorAll('li').forEach(li => {
+                    li.addEventListener('click', function() {
+                        // Determinar tipo
+                        const typeMap = {
+                            '1': 'all',
+                            '2': 'Deporte',
+                            '3': 'Estudio',
+                            '4': 'Social',
+                            '5': 'Cultural',
+                            '6': 'Otro'
+                        };
+                        classicFeedFilterType = typeMap[this.id] || 'all';
+                        // Remover clase activa de todos y poner solo al seleccionado
+                        sidebar.querySelectorAll('li').forEach(item => item.classList.remove('active'));
+                        this.classList.add('active');
+                        // Siempre renderizar el feed clásico si está visible
+                        if (document.getElementById('classic-feed-container').style.display !== 'none') {
+                            renderClassicFeed();
+                        }
+                    });
+                });
+            }
+
+            // Llamar al setup al cargar
+            document.addEventListener('DOMContentLoaded', function() {
+                setupClassicFeedSidebarFilter();
+            });
             function toggleLike(postId) {
                 const post = allPosts.find(p => p.id === postId);
                 if (!post) return;
@@ -1581,6 +1684,11 @@
             }
 
             function setupEventListeners() {
+                // Filtro para el feed clásico
+                const classicFeedFilter = document.getElementById('classic-feed-filter-type');
+                if (classicFeedFilter) {
+                    classicFeedFilter.addEventListener('change', renderClassicFeed);
+                }
                 document.getElementById('view-toggle-btn').addEventListener('click', toggleView);
                 document.getElementById('publish-button').addEventListener('click', savePost);
                 document.getElementById('map-filter-type').addEventListener('change', (e) => renderMapMarkers(e.target.value));
