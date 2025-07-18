@@ -21,6 +21,70 @@
         </div>
         <div class="d-flex align-items-center gap-3">
             <div class="icon-bar d-flex gap-2">
+                <span class="icon-button" id="contacto-icon" title="Contacto">👷</span>
+                <div class="dropdown-content" id="contacto-dropdown">
+                    <div class="dropdown-header">Contacto</div>
+                    <a class="dropdown-item-custom" id="contacto-btn">
+                        <span>✉️</span>
+                        <div>Enviar un correo a soporte</div>
+                    </a>
+                    <a href="https://walink.co/d6e9df" class="dropdown-item-custom" id="contacto-telefono">
+                        <span>📞</span>
+                        <div>Contactar por teléfono</div>
+                    </a>
+                    <a href="./faq.html" target="_blank" class="dropdown-item-custom">
+                        <span>❓</span>
+                        <div>Ver Preguntas Frecuentes</div>
+                    </a>
+                    <a href="./terminos.html" target="_blank" class="dropdown-item-custom">
+                        <span>📜</span>
+                        <div>Leer Términos y Condiciones</div>
+                    </a>
+                    <a href="./privacidad.html" target="_blank" class="dropdown-item-custom">
+                        <span>🔒</span>
+                        <div>Leer Política de Privacidad</div>
+                    </a>
+                </div>
+                <span class="icon-button" id="theme-selector-icon" title="Cambiar Tema">🎨</span>
+                <div class="dropdown-content" id="theme-selector-dropdown" style="max-height: 320px; overflow-y: auto;">
+                    <div class="dropdown-header">Seleccionar Tema</div>
+                    <div class="theme-item" data-theme="default">
+                        <div class="theme-preview" data-theme="default"></div>
+                        <div><strong>Predeterminado</strong><br><small>Azul clásico</small></div>
+                    </div>
+                    <div class="theme-item" data-theme="aurora">
+                        <div class="theme-preview" data-theme="aurora"></div>
+                        <div><strong>Aurora</strong><br><small>Rosa y azul</small></div>
+                    </div>
+                    <div class="theme-item" data-theme="noche">
+                        <div class="theme-preview" data-theme="noche"></div>
+                        <div><strong>Noche</strong><br><small>Modo oscuro</small></div>
+                    </div>
+                    <div class="theme-item" data-theme="oceano">
+                        <div class="theme-preview" data-theme="oceano"></div>
+                        <div><strong>Océano</strong><br><small>Azul marino</small></div>
+                    </div>
+                    <div class="theme-item" data-theme="amanecer">
+                        <div class="theme-preview" data-theme="amanecer"></div>
+                        <div><strong>Amanecer</strong><br><small>Naranja y rojo</small></div>
+                    </div>
+                    <div class="theme-item" data-theme="pastel">
+                        <div class="theme-preview" data-theme="pastel"></div>
+                        <div><strong>Pastel</strong><br><small>Azul suave</small></div>
+                    </div>
+                    <div class="theme-item" data-theme="fuego">
+                        <div class="theme-preview" data-theme="fuego"></div>
+                        <div><strong>Fuego</strong><br><small>Rojo intenso</small></div>
+                    </div>
+                    <div class="theme-item" data-theme="bosque">
+                        <div class="theme-preview" data-theme="bosque"></div>
+                        <div><strong>Bosque</strong><br><small>Verde natural</small></div>
+                    </div>
+                    <div class="theme-item" data-theme="lluvia">
+                        <div class="theme-preview" data-theme="lluvia"></div>
+                        <div><strong>Lluvia Eléctrica</strong><br><small>Azul eléctrico</small></div>
+                    </div>
+                </div>
                 <span class="icon-button" id="requests-icon" title="Solicitudes de amistad">🤝</span>
                 <span class="icon-button" id="notifications-icon" title="Notificaciones">🔔</span>
                 <span class="icon-button" id="profile-icon" title="Perfil">👤</span>
@@ -68,7 +132,187 @@
         </div>
     </footer>
 
+    <style>
+    /* Estilos mínimos para el selector de tema */
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background: #fff;
+        min-width: 220px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        border-radius: 8px;
+        z-index: 2000;
+        right: 0;
+        top: 40px;
+        padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+    }
+    .dropdown-content.show { display: block; }
+    .dropdown-header { font-weight: bold; margin-bottom: 0.5rem; }
+    .theme-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; border-radius: 6px; cursor: pointer; margin-bottom: 0.25rem; }
+    .theme-item.active, .theme-item:hover { background: #e9ecef; }
+    .theme-preview { width: 32px; height: 32px; border-radius: 6px; border: 1.5px solid #ccc; }
+    .theme-item[data-theme="noche"] .theme-preview { background: linear-gradient(145deg, #141E30, #243B55); }
+    .theme-item[data-theme="default"] .theme-preview { background: linear-gradient(145deg, #007BFF, #003366); }
+    .theme-item[data-theme="aurora"] .theme-preview { background: linear-gradient(145deg, #F8CDDA, #1D2B64); }
+    .theme-item[data-theme="oceano"] .theme-preview { background: linear-gradient(145deg, #2C3E50, #4CA1AF); }
+    .theme-item[data-theme="amanecer"] .theme-preview { background: linear-gradient(145deg, #FF512F, #F09819); }
+    .theme-item[data-theme="pastel"] .theme-preview { background: linear-gradient(145deg, #A1C4FD, #C2E9FB); }
+    .theme-item[data-theme="fuego"] .theme-preview { background: linear-gradient(145deg, #CB356B, #BD3F32); }
+    .theme-item[data-theme="bosque"] .theme-preview { background: linear-gradient(145deg, #11998E, #38EF7D); }
+    .theme-item[data-theme="lluvia"] .theme-preview { background: linear-gradient(145deg, #396afc, #2948ff); }
+    </style>
     <script>
+    // --- Lógica de tema igual que dashboard ---
+    const temas = {
+        default: {
+            headerBG: "linear-gradient(145deg, #007BFF, #003366)",
+            headerText: "white",
+            bodyBG: "#f0f2f5",
+            sidebarBG: "linear-gradient(145deg, #007BFF, #003366)",
+            sidebarText: "white",
+            cardBG: "#ffffff",
+            cardText: "#333",
+            btnPrimaryBG: "#00bfff"
+        },
+        aurora: {
+            headerBG: "linear-gradient(145deg, #F8CDDA, #1D2B64)",
+            headerText: "#FFFFFF",
+            bodyBG: "#fdeff2",
+            sidebarBG: "linear-gradient(145deg, #F8CDDA, #1D2B64)",
+            sidebarText: "#FFFFFF",
+            cardBG: "#ffffff",
+            cardText: "#1D2B64",
+            btnPrimaryBG: "#1D2B64"
+        },
+        noche: {
+            headerBG: "linear-gradient(145deg, #141E30, #243B55)",
+            headerText: "white",
+            bodyBG: "#0f172a",
+            sidebarBG: "linear-gradient(145deg, #141E30, #243B55)",
+            sidebarText: "white",
+            cardBG: "#1e293b",
+            cardText: "#e2e8f0",
+            btnPrimaryBG: "#38bdf8"
+        },
+        oceano: {
+            headerBG: "linear-gradient(145deg, #2C3E50, #4CA1AF)",
+            headerText: "white",
+            bodyBG: "#eef6f7",
+            sidebarBG: "linear-gradient(145deg, #2C3E50, #4CA1AF)",
+            sidebarText: "white",
+            cardBG: "#ffffff",
+            cardText: "#2C3E50",
+            btnPrimaryBG: "#4CA1AF"
+        },
+        amanecer: {
+            headerBG: "linear-gradient(145deg, #FF512F, #F09819)",
+            headerText: "white",
+            bodyBG: "#fff8f2",
+            sidebarBG: "linear-gradient(145deg, #FF512F, #F09819)",
+            sidebarText: "white",
+            cardBG: "#ffffff",
+            cardText: "#5c2a07",
+            btnPrimaryBG: "#FF512F"
+        },
+        pastel: {
+            headerBG: "linear-gradient(145deg, #A1C4FD, #C2E9FB)",
+            headerText: "#003366",
+            bodyBG: "#f5f9ff",
+            sidebarBG: "linear-gradient(145deg, #A1C4FD, #C2E9FB)",
+            sidebarText: "#003366",
+            cardBG: "#ffffff",
+            cardText: "#333",
+            btnPrimaryBG: "#A1C4FD"
+        },
+        fuego: {
+            headerBG: "linear-gradient(145deg, #CB356B, #BD3F32)",
+            headerText: "white",
+            bodyBG: "#f9f2f3",
+            sidebarBG: "linear-gradient(145deg, #CB356B, #BD3F32)",
+            sidebarText: "white",
+            cardBG: "#ffffff",
+            cardText: "#4d1024",
+            btnPrimaryBG: "#CB356B"
+        },
+        bosque: {
+            headerBG: "linear-gradient(145deg, #11998E, #38EF7D)",
+            headerText: "white",
+            bodyBG: "#f2fcf8",
+            sidebarBG: "linear-gradient(145deg, #11998E, #38EF7D)",
+            sidebarText: "white",
+            cardBG: "#ffffff",
+            cardText: "#043d38",
+            btnPrimaryBG: "#11998E"
+        },
+        lluvia: {
+            headerBG: "linear-gradient(145deg, #396afc, #2948ff)",
+            headerText: "white",
+            bodyBG: "#f0f2ff",
+            sidebarBG: "linear-gradient(145deg, #396afc, #2948ff)",
+            sidebarText: "white",
+            cardBG: "#ffffff",
+            cardText: "#192d8b",
+            btnPrimaryBG: "#396afc"
+        }
+    };
+    function applyTheme(themeName) {
+        const root = document.documentElement;
+        const theme = temas[themeName] || temas.noche;
+        root.style.setProperty('--header-bg', theme.headerBG);
+        root.style.setProperty('--header-text-color', theme.headerText);
+        root.style.setProperty('--body-bg', theme.bodyBG);
+        root.style.setProperty('--sidebar-bg', theme.sidebarBG);
+        root.style.setProperty('--sidebar-text-color', theme.sidebarText);
+        root.style.setProperty('--card-bg', theme.cardBG);
+        root.style.setProperty('--card-text-color', theme.cardText);
+        root.style.setProperty('--btn-primary-bg', theme.btnPrimaryBG);
+        root.style.setProperty('--btn-primary-text', theme.headerText);
+        // Scrollbar color según el tema
+        let scrollbarThumb = theme.btnPrimaryBG || '#007BFF';
+        let scrollbarTrack = '#e0e0e0';
+        if (themeName === 'noche') {
+            scrollbarTrack = '#222c3a';
+        } else {
+            scrollbarTrack = '#FFFFFF';
+        }
+        root.style.setProperty('--scrollbar-thumb', scrollbarThumb);
+        root.style.setProperty('--scrollbar-track', scrollbarTrack);
+    }
+
+    // Aplicar el tema guardado al cargar y marcar activo
+    const temaActual = localStorage.getItem('geoPlannerTema') || 'default';
+    applyTheme(temaActual);
+    window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.theme-item').forEach(item => {
+            if(item.dataset.theme === temaActual) item.classList.add('active');
+        });
+    });
+
+    // --- Selector de tema ---
+    const themeSelectorIcon = document.getElementById('theme-selector-icon');
+    const themeSelectorDropdown = document.getElementById('theme-selector-dropdown');
+    themeSelectorIcon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isShown = themeSelectorDropdown.classList.contains('show');
+        closeAllDropdowns();
+        if (!isShown) themeSelectorDropdown.classList.add('show');
+    });
+    document.querySelectorAll('.theme-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const themeName = item.dataset.theme;
+            applyTheme(themeName);
+            localStorage.setItem('geoPlannerTema', themeName);
+            document.querySelectorAll('.theme-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            themeSelectorDropdown.classList.remove('show');
+        });
+    });
+    // Cerrar dropdowns al hacer click fuera
+    function closeAllDropdowns() {
+        themeSelectorDropdown.classList.remove('show');
+    }
+    window.addEventListener('click', closeAllDropdowns);
+
     // --- Cargar inscripciones del usuario ---
     const currentUser = JSON.parse(sessionStorage.getItem('currentUser')) || {};
     const USER_ID = currentUser.nombreUsuario || 'invitado';

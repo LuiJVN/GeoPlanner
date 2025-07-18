@@ -1,3 +1,95 @@
+/* Estilos para el selector de temas (copiados de dashboard.css) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 55px;
+    background-color: var(--card-bg);
+    color: var(--card-text-color);
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    width: 360px;
+    z-index: 2000;
+    border: 1.5px solid var(--sidebar-bg, #ddd);
+    transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.dropdown-content.show {
+    display: block;
+}
+.dropdown-header {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: var(--sidebar-text-color);
+}
+.theme-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 8px;
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+    color: var(--card-text-color);
+}
+.theme-item:hover {
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text-color);
+}
+.theme-item.active {
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text-color);
+}
+.theme-preview {
+    width: 40px;
+    height: 25px;
+    border-radius: 4px;
+    border: 2px solid var(--btn-primary-bg, #007BFF);
+    position: relative;
+    overflow: hidden;
+    background: var(--card-bg);
+    transition: border 0.2s, background 0.2s;
+}
+.theme-preview.active {
+    border-color: var(--sidebar-bg);
+}
+.theme-preview::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 2px;
+}
+.theme-preview[data-theme="default"]::before {
+    background: linear-gradient(145deg, #007BFF, #003366);
+}
+.theme-preview[data-theme="aurora"]::before {
+    background: linear-gradient(145deg, #F8CDDA, #1D2B64);
+}
+.theme-preview[data-theme="noche"]::before {
+    background: linear-gradient(145deg, #141E30, #243B55);
+}
+.theme-preview[data-theme="oceano"]::before {
+    background: linear-gradient(145deg, #2C3E50, #4CA1AF);
+}
+.theme-preview[data-theme="amanecer"]::before {
+    background: linear-gradient(145deg, #FF512F, #F09819);
+}
+.theme-preview[data-theme="pastel"]::before {
+    background: linear-gradient(145deg, #A1C4FD, #C2E9FB);
+}
+.theme-preview[data-theme="fuego"]::before {
+    background: linear-gradient(145deg, #CB356B, #BD3F32);
+}
+.theme-preview[data-theme="bosque"]::before {
+    background: linear-gradient(145deg, #11998E, #38EF7D);
+}
+.theme-preview[data-theme="lluvia"]::before {
+    background: linear-gradient(145deg, #396afc, #2948ff);
+}
 :root {
     --header-bg: linear-gradient(145deg, #007BFF, #003366);
     --header-text-color: white;
@@ -92,7 +184,7 @@ header {
     padding: 1.5rem;
     overflow-y: auto;
     position: relative;
-    background: #eceff1;
+    background: var(--body-bg);
 }
 .card {
     background-color: var(--card-bg);
@@ -110,23 +202,29 @@ header {
 .d-flex.align-items-center.gap-3 {
     gap: 1.5rem !important;
 }
-.icon-bar .icon-button {
-    font-size: 1.2rem;
+.icon-bar {
+    position: relative;
+    gap: 0.5rem !important;
+}
+.icon-button {
+    border-radius: 50%;
     width: 40px;
     height: 40px;
-    margin-left: 0;
-    margin-right: 0.25rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    color: var(--header-text-color);
 }
-.icon-bar {
-    gap: 0.5rem !important;
+.icon-button:hover {
+    background-color: var(--header-icon-hover-bg);
 }
 h2.mb-4 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #222;
+    color: var(--card-text-color);
     margin-bottom: 2.5rem !important;
 }
 #inscripciones-list {
@@ -156,27 +254,27 @@ h2.mb-4 {
 }
 
 .footer-bar {
-background-color: #ffffff;
-box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
-bottom: 0;
-left: 0;
-width: 100%;
-z-index: 1030;
+    background-color: var(--card-bg);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1030;
 }
 
+
 .footer-text {
-font-size: 1rem;
-color: #555;
-font-weight: 500;
+    font-size: 1rem;
+    color: var(--card-text-color);
+    font-weight: 500;
 }
 
 .footer-link {
-font-size: 1rem;
-color: #555;
-text-decoration: none;
+    font-size: 1rem;
+    color: var(--card-text-color);
+    text-decoration: none;
 }
-
 .footer-link:hover {
-color: #000;
-text-decoration: underline;
+    color: var(--btn-primary-bg);
+    text-decoration: underline;
 }

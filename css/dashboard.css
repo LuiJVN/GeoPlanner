@@ -38,6 +38,17 @@ body.classic-view-active .content-area {
     justify-content: center;
 }
 
+/* Estilo para location-display y agenda-location-display */
+#location-display,
+#agenda-location-display {
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    background-color: #f8f9fa;
+    font-size: 0.95rem;
+    color: #495057;
+}
+
 header {
     background: var(--header-bg);
     color: var(--header-text-color);

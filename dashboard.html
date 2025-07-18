@@ -56,6 +56,7 @@
         #theme-selector-dropdown::-webkit-scrollbar-track {
             background: var(--scrollbar-track, #e0e0e0);
         }
+
     </style>
     <link rel="stylesheet" href="bootstrap-icons/bootstrap-icons.min.css" />
     <style>
@@ -374,7 +375,7 @@
                         </div>
                         <div class="mb-3">
                             <button class="btn btn-outline-primary w-100" type="button" data-bs-toggle="modal"
-                                data-bs-target="#map-select-modal">
+                                data-bs-target="#map-select-modal" id="publicacion-location-btn">
                                 📍 Seleccionar Ubicación
                             </button>
                             <div id="location-display" class="mt-2">No se ha seleccionado ninguna ubicación.</div>
@@ -507,6 +508,12 @@
                                         placeholder="Descripción..."></textarea></div>
                                 <div class="mb-2"><input type="datetime-local" id="agenda-date" class="form-control"
                                         required></div>
+                                <div class="mb-2">
+                                    <button class="btn btn-outline-primary w-100" type="button" data-bs-toggle="modal" data-bs-target="#map-select-modal" id="agenda-location-btn">
+                                        📍 Seleccionar Ubicación
+                                    </button>
+                                    <div id="agenda-location-display" class="mt-2">No se ha seleccionado ninguna ubicación.</div>
+                                </div>
                                 <button type="submit" class="btn btn-primary w-100">Guardar Actividad</button>
                             </form>
                         </div>
@@ -1990,7 +1997,7 @@
                 });
 
                 const mapSelectModalEl = document.getElementById('map-select-modal');
-                const selectLocationBtn = document.getElementById('select-location-btn');
+                let selectLocationBtn = document.getElementById('publicacion-location-btn');
                 if (selectLocationBtn) {
                     selectLocationBtn.removeAttribute('data-bs-toggle');
                     selectLocationBtn.removeAttribute('data-bs-target');
@@ -2000,6 +2007,26 @@
                         modalInstance.show();
                     });
                 }
+
+                let agendaLocationBtn = document.getElementById('agenda-location-btn');
+                if (agendaLocationBtn) {
+                    agendaLocationBtn.removeAttribute('data-bs-toggle');
+                    agendaLocationBtn.removeAttribute('data-bs-target');
+                    agendaLocationBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        // Oculta el modal de la agenda antes de mostrar el de ubicación
+                        const agendaModalEl = document.getElementById('agenda-modal');
+                        if (agendaModalEl) {
+                            bootstrap.Modal.getOrCreateInstance(agendaModalEl).hide();
+                        }
+                        setTimeout(() => {
+                            const modalInstance = bootstrap.Modal.getOrCreateInstance(mapSelectModalEl);
+                            modalInstance.show();
+                        }, 300); // Espera a que se oculte el modal anterior
+                    });
+                }
+
+
                 mapSelectModalEl.addEventListener('shown.bs.modal', function () {
                     if (!selectionMap) {
                         selectionMap = L.map('modal-map-container').setView([10.654, -71.612], 13);
@@ -2069,12 +2096,19 @@
                     if (selectedMarkers.length > 0) {
                         const latlngs = selectedMarkers.map(m => m.getLatLng());
                         document.getElementById('location-display').textContent = routeType === 'simple' ? `Ubicación: [${latlngs[0].lat.toFixed(4)}, ${latlngs[0].lng.toFixed(4)}]` : `Ruta Múltiple (${selectedMarkers.length} puntos)`;
+                        document.getElementById('agenda-location-display').textContent = document.getElementById('location-display').textContent;
                         document.activeElement.blur();
                         bootstrap.Modal.getInstance(mapSelectModalEl).hide();
-                        const createPostModalEl = document.getElementById('create-post-modal');
-                        if (createPostModalEl) {
+                        if(agendaLocationBtn === document.getElementById('agenda-location-btn')){
+                            const agendaLocation = document.getElementById('agenda-modal');
+                            agendaLocation.classList.remove('modal-blur');
+                            bootstrap.Modal.getOrCreateInstance(agendaLocation).show();
+                            //agendaLocationBtn = null;
+                        } else if (selectLocationBtn === document.getElementById('publicacion-location-btn')) {
+                            const createPostModalEl = document.getElementById('create-post-modal');
                             createPostModalEl.classList.remove('modal-blur');
                             bootstrap.Modal.getOrCreateInstance(createPostModalEl).show();
+                            //selectLocationBtn = null;
                         }
                     } else {
                         alert("Por favor, selecciona al menos un punto.");
