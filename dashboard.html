@@ -841,6 +841,16 @@
                     }
                 });
 
+                // Cambiar color del input de crear post según el tema
+                const createPostInput = document.querySelector('.create-post-widget-input');
+                if (createPostInput) {
+                    if (themeName === 'noche') {
+                        createPostInput.style.color = '#fff';
+                    } else {
+                        createPostInput.style.color = '';
+                    }
+                }
+
                 localStorage.setItem('geoPlannerTema', themeName);
             }
 
@@ -1080,24 +1090,10 @@
                 if (currentView === 'map') {
                     mainMap.invalidateSize();
                 } else {
-                    // Mantener el filtro activo en left-sidebar-down
-                    const sidebar = document.getElementById('map-filter-type');
-                    if (sidebar) {
-                        sidebar.querySelectorAll('li').forEach(li => {
-                            li.classList.remove('active');
-                            // typeMap igual que en el filtro
-                            const typeMap = {
-                                '1': 'all',
-                                '2': 'Deporte',
-                                '3': 'Estudio',
-                                '4': 'Social',
-                                '5': 'Cultural',
-                                '6': 'Otro'
-                            };
-                            if (typeMap[li.id] === classicFeedFilterType) {
-                                li.classList.add('active');
-                            }
-                        });
+                    // Limpiar el sidebar down al pasar al feed clásico
+                    const sidebarDown = document.querySelector('.left-sidebar-down ul');
+                    if (sidebarDown) {
+                        sidebarDown.innerHTML = '';
                     }
                     renderClassicFeed();
                 }
@@ -2002,6 +1998,7 @@
                     selectLocationBtn.removeAttribute('data-bs-toggle');
                     selectLocationBtn.removeAttribute('data-bs-target');
                     selectLocationBtn.addEventListener('click', function (e) {
+                        let publicarActivo= document.getElementById('publicacion-location-btn');
                         e.preventDefault();
                         const modalInstance = bootstrap.Modal.getOrCreateInstance(mapSelectModalEl);
                         modalInstance.show();
@@ -2014,6 +2011,7 @@
                     agendaLocationBtn.removeAttribute('data-bs-target');
                     agendaLocationBtn.addEventListener('click', function (e) {
                         e.preventDefault();
+                        let publicarAgenda = document.getElementById('agenda-location-btn');
                         // Oculta el modal de la agenda antes de mostrar el de ubicación
                         const agendaModalEl = document.getElementById('agenda-modal');
                         if (agendaModalEl) {
@@ -2099,16 +2097,16 @@
                         document.getElementById('agenda-location-display').textContent = document.getElementById('location-display').textContent;
                         document.activeElement.blur();
                         bootstrap.Modal.getInstance(mapSelectModalEl).hide();
-                        if(agendaLocationBtn === document.getElementById('agenda-location-btn')){
+                        if(publicarAgenda === document.getElementById('agenda-location-btn')){
                             const agendaLocation = document.getElementById('agenda-modal');
                             agendaLocation.classList.remove('modal-blur');
                             bootstrap.Modal.getOrCreateInstance(agendaLocation).show();
-                            //agendaLocationBtn = null;
-                        } else if (selectLocationBtn === document.getElementById('publicacion-location-btn')) {
+                            publicarAgenda = '';
+                        } else if (publicarActivo === document.getElementById('publicacion-location-btn')) {
                             const createPostModalEl = document.getElementById('create-post-modal');
                             createPostModalEl.classList.remove('modal-blur');
                             bootstrap.Modal.getOrCreateInstance(createPostModalEl).show();
-                            //selectLocationBtn = null;
+                            publicarActivo = '';
                         }
                     } else {
                         alert("Por favor, selecciona al menos un punto.");
