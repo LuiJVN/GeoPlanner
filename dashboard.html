@@ -109,7 +109,54 @@
             <button id="view-toggle-btn" class="btn btn-outline-light btn-sm">Ver Feed Clásico</button>
             <div class="icon-bar d-flex gap-2">
 
-                <span class="icon-button" id="contacto-btn">👷</span>
+
+                <span class="icon-button" id="contacto-icon" title="Contacto">👷</span>
+                <div class="dropdown-content" id="contacto-dropdown">
+                    <div class="dropdown-header">Contacto</div>
+                    <a  class="dropdown-item-custom" id="contacto-btn">
+                        <span>✉️</span>
+                        <div>Enviar un correo a soporte</div>
+                    </a>
+                    <a href="https://walink.co/d6e9df" class="dropdown-item-custom" id="contacto-telefono">
+                        <span>📞</span>
+                        <div>Contactar por teléfono</div>
+                    </a>
+                    <a href="./faq.html" class="dropdown-item-custom">
+                        <span>❓</span>
+                        <div>Ver Preguntas Frecuentes</div>
+                    </a>
+                    <a href="./terminos.html" class="dropdown-item-custom">
+                        <span>📜</span>
+                        <div>Leer Términos y Condiciones</div>
+                    </a>
+                    <a href="./privacidad.html" class="dropdown-item-custom">
+                        <span>🔒</span>
+                        <div>Leer Política de Privacidad</div>
+                    </a>
+                </div>
+                <!--
+                <span class="icon-button" id="profile-icon" title="Perfil">👷</span>
+                <div class="dropdown-content" id="contacto-dropdown">
+                    <a href="perfil.html" class="dropdown-item-custom">
+                        <img class="foto-usuario" src="img/placeholder.png" alt="profile">
+                        <div>
+                            <span class="nombre-usuario">Usuario</span>
+                            <svg class="geoplanner-verified-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                fill="currentColor">
+                                <path
+                                    d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm5.71,7.29-6,6a1,1,0,0,1-1.42,0l-3-3a1,1,0,0,1,1.42-1.42L11,13.59l5.29-5.3a1,1,0,0,1,1.42,1.42Z" />
+                            </svg>
+                            <br>
+                            <small>Ver tu perfil</small>
+                        </div>
+                    </a>
+                    <hr class="my-2">
+                    <a href="inicio.html" class="dropdown-item-custom" id="logout-button">
+                        <span>➡️</span>
+                        <div><strong>Cerrar sesión</strong></div>
+                    </a>
+                </div>
+            -->
 
 
                 <span class="icon-button" id="theme-selector-icon" title="Cambiar Tema">🎨</span>
@@ -511,6 +558,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            
             // Redirección a Gmail al hacer click en el botón de contacto
             const contactoBtn = document.getElementById('contacto-btn');
             if (contactoBtn) {
@@ -522,6 +570,8 @@
                     window.open(url, '_blank');
                 });
             }
+            
+
 
             // --- GLOBAL VARIABLES & CONSTANTS ---
             const STORAGE_KEY_POSTS = 'geoplanner_posts';
@@ -1805,6 +1855,19 @@
                     });
                 });
 
+                const contactoIcon = document.getElementById('contacto-icon');
+                const contactoDropdown = document.getElementById('contacto-dropdown');
+
+                contactoIcon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isShown = contactoDropdown.classList.contains('show');
+                    closeAllDropdowns();
+                    if (!isShown) contactoDropdown.classList.add('show');
+                });
+
+
+
+
                 const mapStylesIcon = document.getElementById('map-styles-icon');
                 const mapStylesDropdown = document.getElementById('map-styles-dropdown');
 
@@ -1831,6 +1894,7 @@
                 const closeAllDropdowns = () => {
                     document.getElementById('theme-selector-dropdown').classList.remove('show');
                     document.getElementById('map-styles-dropdown').classList.remove('show');
+                    document.getElementById('contacto-dropdown').classList.remove('show');
                     Object.values(dropdownIcons).forEach(id => {
                         const el = document.getElementById(id);
                         if (el) el.classList.remove('show');
